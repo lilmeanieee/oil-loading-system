@@ -7,30 +7,30 @@
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
-        <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-        <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <style>[x-cloak]{display:none !important}</style>
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
+        <div class="flex min-h-screen bg-gray-100" x-data="{ sidebar: false }">
             @include('layouts.navigation')
 
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endisset
+            <div class="flex min-w-0 flex-1 flex-col">
+                <div class="flex items-center justify-between bg-slate-900 px-4 py-3 lg:hidden print:hidden">
+                    <span class="font-semibold text-amber-400">Oil Loading System</span>
+                    <button type="button" @click="sidebar = true" class="rounded px-2 py-1 text-sm text-slate-200 hover:bg-slate-800">Menu</button>
+                </div>
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+                @isset($header)
+                    <header class="bg-white shadow print:shadow-none">
+                        <div class="px-4 py-5 sm:px-6 lg:px-8">{{ $header }}</div>
+                    </header>
+                @endisset
+
+                <main class="flex-1">{{ $slot }}</main>
+            </div>
         </div>
     </body>
 </html>

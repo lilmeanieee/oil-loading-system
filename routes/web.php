@@ -7,6 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PwaController;
 use App\Http\Controllers\ReleaseController;
 use App\Http\Controllers\TruckMasterController;
+use App\Http\Controllers\Auth\VerifyCodeController;
 use App\Support\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -58,6 +59,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+// Email code verification (shown after a correct email/password, before login completes)
+Route::middleware('guest')->group(function () {
+    Route::get('/verify-code', [VerifyCodeController::class, 'show'])->name('verify.show');
+    Route::post('/verify-code', [VerifyCodeController::class, 'check'])
+        ->middleware('throttle:10,1')->name('verify.check');
+    Route::post('/verify-code/resend', [VerifyCodeController::class, 'resend'])
+        ->middleware('throttle:5,1')->name('verify.resend');
+    Route::get('/verify-code/cancel', [VerifyCodeController::class, 'cancel'])->name('verify.cancel');
 });
 
 require __DIR__.'/auth.php';

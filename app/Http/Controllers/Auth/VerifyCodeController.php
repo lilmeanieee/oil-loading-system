@@ -22,9 +22,7 @@ class VerifyCodeController extends Controller
      */
     public static function sendCode(User $user): void
     {
-        $code = app()->environment('local')
-            ? '123456'
-            : str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
         Cache::put(self::key($user->id), [
             'hash'     => Hash::make($code),

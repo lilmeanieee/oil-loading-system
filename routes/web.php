@@ -12,6 +12,7 @@ use App\Support\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+
 // The login page is the index. Signed-in users are sent to the dashboard automatically.
 Route::redirect('/', '/login');
 
@@ -46,14 +47,15 @@ Route::middleware('auth')->group(function () {
     // Master data
     Route::get('/trucks', [TruckMasterController::class, 'index'])->name('trucks.index');
 
-    // DEMO ONLY: preview the pages as each role. Remove when real roles exist.
-    Route::post('/demo/role', function (Request $request) {
-        if (array_key_exists($request->input('role'), Role::LABELS)) {
-            session(['demo_role' => $request->input('role')]);
-        }
+    Route::post('/developer/view-as', function (Request $request) {
+    abort_unless(Role::isDeveloper(), 403);
 
-        return redirect()->route('dashboard');
-    })->name('demo.role');
+    if (array_key_exists($request->input('role'), Role::LABELS)) {
+        session(['view_as' => $request->input('role')]);
+    }
+
+    return redirect()->route('dashboard');
+    })->name('developer.view-as');
 
     // Profile pages that come with Breeze
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -12,8 +12,9 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <style>[x-cloak]{display:none !important}</style>
+        <x-pwa-head />
     </head>
-    <body class="font-sans antialiased">
+    <body class="font-sans antialiased" data-pwa-auth="1" data-pwa-home="{{ route('dashboard') }}">
         <div class="flex min-h-screen bg-gray-100" x-data="{ sidebar: false }">
             @include('layouts.navigation')
 
@@ -32,5 +33,6 @@
                 <main class="flex-1">{{ $slot }}</main>
             </div>
         </div>
+        <x-pwa-status />
     </body>
 </html>

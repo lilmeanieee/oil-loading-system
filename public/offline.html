@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0f172a">
+  <title>Offline - Oil Loading System</title>
+  <style>
+    body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #f3f4f6; color: #1e293b; }
+    main { max-width: 34rem; margin: 12vh auto; padding: 0 1.25rem; }
+    .card { background: #fff; border: 1px solid #e2e8f0; border-radius: .5rem; padding: 1.5rem; }
+    h1 { margin: 0 0 .5rem; font-size: 1.35rem; }
+    p { line-height: 1.5; margin: .5rem 0; }
+    ul { padding-left: 1.2rem; line-height: 1.8; }
+    a { color: #b45309; }
+    button { margin-top: .75rem; background: #f59e0b; border: 0; border-radius: .375rem; padding: .6rem 1.1rem; font-weight: 600; color: #0f172a; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="card">
+      <h1>You are offline</h1>
+      <p>This page was not saved on this device yet. Pages you opened before while connected still work.</p>
+      <p>Forms you fill in offline are saved on this device and sent automatically when the connection returns.</p>
+      <ul>
+        <li><a href="/dashboard">Dashboard</a></li>
+        <li><a href="/atl">ATL records</a></li>
+        <li><a href="/atl/create">Create ATL</a></li>
+        <li><a href="/trucks">Trucks</a></li>
+      </ul>
+      <button type="button" onclick="location.reload()">Try again</button>
+    </div>
+  </main>
+</body>
+</html>

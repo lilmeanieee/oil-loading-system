@@ -4,6 +4,7 @@ use App\Http\Controllers\AtlController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoadingTicketController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PwaController;
 use App\Http\Controllers\ReleaseController;
 use App\Http\Controllers\TruckMasterController;
 use App\Support\Role;
@@ -13,7 +14,13 @@ use Illuminate\Support\Facades\Route;
 // The login page is the index. Signed-in users are sent to the dashboard automatically.
 Route::redirect('/', '/login');
 
+// Offline support: reachable without signing in so the page can check its connection.
+Route::get('/pwa/ping', [PwaController::class, 'ping'])->name('pwa.ping');
+
 Route::middleware('auth')->group(function () {
+    Route::get('/pwa/csrf', [PwaController::class, 'csrf'])->name('pwa.csrf');
+    Route::get('/pwa/urls', [PwaController::class, 'urls'])->name('pwa.urls');
+
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Authority to Load

@@ -12,7 +12,7 @@
         $startAtl = $prefill['atl_no'] ?? 'ATL#';
     @endphp
 
-    <form method="POST" action="{{ route('atl.store') }}" class="py-6"
+    <form method="POST" action="{{ route('atl.store') }}" class="py-6" data-offline="queue" data-offline-label="ATL" data-offline-ref="so_no"
           x-data="atlForm(@js($trucks), @js($products), @js($prefill), @js($taken), @js([$startSo, $startControl, $startAtl]))">
         @csrf
         @if ($prefill)<input type="hidden" name="atl_id" value="{{ $prefill['id'] }}">@endif

@@ -39,11 +39,12 @@
     </nav>
 
     <div class="space-y-3 border-t border-slate-700 px-4 py-4">
+        <button type="button" id="pwa-install" hidden class="w-full rounded border border-amber-400 px-3 py-1.5 text-sm text-amber-300 hover:bg-slate-800">Install app on this device</button>
         {{-- DEMO ONLY: preview the pages as each role --}}
-        <form method="POST" action="{{ route('demo.role') }}">
+        <form method="POST" action="{{ route('demo.role') }}" data-offline="online" data-pwa-clear>
             @csrf
             <label for="demo_role" class="mb-1 block text-xs text-slate-400">Viewing as</label>
-            <select id="demo_role" name="role" onchange="this.form.submit()" class="w-full rounded border-0 bg-slate-800 py-1.5 text-sm text-slate-100 focus:ring-amber-500">
+            <select id="demo_role" name="role" onchange="this.form.requestSubmit()" class="w-full rounded border-0 bg-slate-800 py-1.5 text-sm text-slate-100 focus:ring-amber-500">
                 @foreach (\App\Support\Role::LABELS as $key => $label)
                     <option value="{{ $key }}" @selected(\App\Support\Role::current() === $key)>{{ $label }}</option>
                 @endforeach
@@ -51,7 +52,7 @@
         </form>
         <div class="flex items-center justify-between text-sm">
             <a href="{{ route('profile.edit') }}" class="truncate text-slate-300 hover:text-white">{{ Auth::user()->name }}</a>
-            <form method="POST" action="{{ route('logout') }}">
+            <form method="POST" action="{{ route('logout') }}" data-offline="online" data-pwa-clear>
                 @csrf
                 <button type="submit" class="text-slate-400 hover:text-white">Log out</button>
             </form>

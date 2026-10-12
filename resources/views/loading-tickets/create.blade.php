@@ -13,7 +13,7 @@
         $ppe = ['Safety shoes', 'Hard hat', 'Gloves (cotton and nitrile)', 'Long-sleeve shirt or jacket', 'Fall protection harness', 'Respirator'];
     @endphp
 
-    <form method="POST" action="{{ route('loading-tickets.store') }}" class="py-6" x-data="ltForm(@js($atl), @js($trucks), @js($codes))">
+    <form method="POST" action="{{ route('loading-tickets.store') }}" class="py-6" data-offline="queue" data-offline-label="Loading ticket" data-offline-ref="plate" x-data="ltForm(@js($atl), @js($trucks), @js($codes))">
         @csrf
         <input type="hidden" name="atl_id" value="{{ $atl['id'] }}">
         <div class="mx-auto max-w-6xl space-y-6 px-4 sm:px-6 lg:px-8">

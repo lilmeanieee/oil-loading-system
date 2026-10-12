@@ -42,13 +42,13 @@
                 <div class="rounded border border-slate-200 bg-white p-4 print:hidden" x-data="{ declining: false }">
                     <p class="mb-3 text-sm text-slate-700">This ATL is waiting for your decision.</p>
                     <div class="flex gap-2" x-show="!declining">
-                        <form method="POST" action="{{ route('atl.approve', $atl['id']) }}">
+                        <form method="POST" action="{{ route('atl.approve', $atl['id']) }}" data-offline="online">
                             @csrf
                             <button type="submit" class="{{ $btn }} bg-emerald-600 text-white hover:bg-emerald-700">Approve ATL</button>
                         </form>
                         <button type="button" @click="declining = true" class="{{ $btn }} border border-red-300 bg-white text-red-700 hover:bg-red-50">Decline</button>
                     </div>
-                    <form method="POST" action="{{ route('atl.decline', $atl['id']) }}" x-show="declining" x-cloak class="space-y-2">
+                    <form method="POST" action="{{ route('atl.decline', $atl['id']) }}" data-offline="online" x-show="declining" x-cloak class="space-y-2">
                         @csrf
                         <label for="reason" class="block text-sm font-medium text-slate-700">Reason for declining (the creator will see this)</label>
                         <textarea id="reason" name="reason" rows="3" required minlength="5" class="w-full rounded border-slate-300 text-sm focus:border-amber-500 focus:ring-amber-500"></textarea>

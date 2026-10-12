@@ -11,7 +11,7 @@
         $today = strtoupper(now()->format('F d, Y'));
     @endphp
 
-    <form method="POST" action="{{ route('releases.store') }}" class="py-6" x-data="releaseForm(@js($lines), @js($next), @js($used), @js($signers), @js($atlInfo), @js($today))">
+    <form method="POST" action="{{ route('releases.store') }}" class="py-6" data-offline="queue" data-offline-label="Delivery receipt and withdrawal certificate" data-offline-ref="dr_no" x-data="releaseForm(@js($lines), @js($next), @js($used), @js($signers), @js($atlInfo), @js($today))">
         @csrf
         <input type="hidden" name="atl_id" value="{{ $atl['id'] }}">
 

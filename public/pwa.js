@@ -124,6 +124,10 @@
         });
         list.appendChild(li);
       });
+      [].slice.call(document.querySelectorAll('[data-pwa-queue-count]')).forEach(function (n) { n.textContent = items.length; });
+      var last = null;
+      try { last = localStorage.getItem('pwaLastSync'); } catch (e) {}
+      [].slice.call(document.querySelectorAll('[data-pwa-last-sync]')).forEach(function (n) { n.textContent = last ? new Date(Number(last)).toLocaleString() : 'not yet'; });
       $('pwa-panel-note').textContent = items.length
         ? 'These were saved on this device and will be sent when you are online.'
         : 'Nothing is waiting.';
@@ -224,7 +228,7 @@
       });
     }).then(function () {
       syncing = false;
-      if (sent) { toast('Sent ' + sent + ' saved item' + (sent > 1 ? 's' : '') + '. Reload the page to see the latest records.'); precache(); }
+      if (sent) { try { localStorage.setItem('pwaLastSync', String(Date.now())); } catch (e) {} toast('Sent ' + sent + ' saved item' + (sent > 1 ? 's' : '') + '. Reload the page to see the latest records.'); precache(); }
       return render();
     }).catch(function () { syncing = false; });
   }

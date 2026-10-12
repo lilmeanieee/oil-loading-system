@@ -44,6 +44,16 @@ class PwaController extends Controller
             $pages[] = $r('loading.index');
         }
 
+        $pages[] = $r('account.show');
+        if (Role::can('atl.create')) {
+            array_push($pages, $r('atl.mine'), $r('atl.drafts'), $r('atl.returned'));
+        }
+        foreach ([['drivers.view', 'drivers.index'], ['haulers.view', 'haulers.index'], ['products.manage', 'products.index'], ['users.manage', 'users.index'], ['reports.view', 'reports.index'], ['audit.view', 'audit.index'], ['settings.manage', 'settings.index']] as [$perm, $name]) {
+            if (Role::can($perm)) {
+                $pages[] = $r($name);
+            }
+        }
+
         if (Role::can('atl.view')) {
             foreach (DemoData::atls() as $a) {
                 $pages[] = $r('atl.show', ['id' => $a['id']]);

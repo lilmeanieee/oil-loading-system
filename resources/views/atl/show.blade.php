@@ -13,13 +13,13 @@
                 <a href="{{ route('atl.index') }}" class="{{ $btn }} border border-slate-300 bg-white text-slate-700 hover:bg-slate-50">Back</a>
                 <button type="button" onclick="window.print()" class="{{ $btn }} border border-slate-300 bg-white text-slate-700 hover:bg-slate-50">Print</button>
                 @if (in_array($atl['status'], ['Draft', 'Declined']) && $role::can('atl.create'))
-                    <a href="{{ route('atl.create', ['edit' => $atl['id']]) }}" class="{{ $btn }} bg-amber-500 text-slate-900 hover:bg-amber-400">{{ $atl['status'] === 'Draft' ? 'Continue editing' : 'Correct and resubmit' }}</a>
+                    <a href="{{ route('atl.create', ['edit' => $atl['id']]) }}" class="{{ $btn }} bg-[#1c3d34] text-white hover:bg-[#2a5a4c]">{{ $atl['status'] === 'Draft' ? 'Continue editing' : 'Correct and resubmit' }}</a>
                 @endif
                 @if (in_array($atl['status'], ['Approved', 'Loading']) && $role::can('loading.manage'))
-                    <a href="{{ route('loading-tickets.create', $atl['id']) }}" class="{{ $btn }} bg-amber-500 text-slate-900 hover:bg-amber-400">{{ $atl['status'] === 'Approved' ? 'Create loading ticket' : 'Open loading ticket' }}</a>
+                    <a href="{{ route('loading-tickets.create', $atl['id']) }}" class="{{ $btn }} bg-[#1c3d34] text-white hover:bg-[#2a5a4c]">{{ $atl['status'] === 'Approved' ? 'Create loading ticket' : 'Open loading ticket' }}</a>
                 @endif
                 @if ($atl['status'] === 'Approved' && ! $atl['docs_issued'] && $role::can('documents.issue'))
-                    <a href="{{ route('releases.create', $atl['id']) }}" class="{{ $btn }} border border-amber-500 bg-white text-slate-900 hover:bg-amber-50">Issue documents</a>
+                    <a href="{{ route('releases.create', $atl['id']) }}" class="{{ $btn }} border border-emerald-700 bg-white text-slate-900 hover:bg-emerald-50">Issue documents</a>
                 @endif
                 @if ($atl['docs_issued'] && $role::can('documents.view'))
                     <a href="{{ route('documents.index') }}" class="{{ $btn }} border border-slate-300 bg-white text-slate-700 hover:bg-slate-50">View issued documents</a>
@@ -51,7 +51,7 @@
                     <form method="POST" action="{{ route('atl.decline', $atl['id']) }}" data-offline="online" x-show="declining" x-cloak class="space-y-2">
                         @csrf
                         <label for="reason" class="block text-sm font-medium text-slate-700">Reason for declining (the creator will see this)</label>
-                        <textarea id="reason" name="reason" rows="3" required minlength="5" class="w-full rounded border-slate-300 text-sm focus:border-amber-500 focus:ring-amber-500"></textarea>
+                        <textarea id="reason" name="reason" rows="3" required minlength="5" class="w-full rounded border-slate-300 text-sm focus:border-emerald-700 focus:ring-emerald-700"></textarea>
                         @error('reason')<p class="text-sm text-red-700">{{ $message }}</p>@enderror
                         <div class="flex gap-2">
                             <button type="submit" class="{{ $btn }} bg-red-600 text-white hover:bg-red-700">Decline ATL</button>

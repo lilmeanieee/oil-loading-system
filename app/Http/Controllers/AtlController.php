@@ -8,18 +8,43 @@ use Illuminate\Http\Request;
 
 class AtlController extends Controller
 {
-    public function index(Request $request)
+    private function lists(string $title, string $preset, string $mode)
     {
         abort_unless(Role::can('atl.view'), 403);
 
-        return view('atl.index', ['atls' => DemoData::atls(), 'title' => 'ATL records', 'preset' => $request->query('status', 'All')]);
+        $atls = collect(DemoData::atls());
+        if (Role::current() === 'atl_user') {
+            $atls = $atls->where('creator', DashboardController::ME); // an ATL User sees only their own ATLs
+        }
+
+        return view('atl.index', ['atls' => $atls->values()->all(), 'title' => $title, 'preset' => $preset, 'mode' => $mode]);
+    }
+
+    public function index(Request $request)
+    {
+        return $this->lists('ATL records', $request->query('status', 'All'), 'all');
+    }
+
+    public function mine(Request $request)
+    {
+        return $this->lists('My ATL Records', $request->query('status', 'All'), 'mine');
+    }
+
+    public function drafts()
+    {
+        return $this->lists('Drafts', 'Draft', 'drafts');
+    }
+
+    public function returned()
+    {
+        return $this->lists('Returned ATLs', 'Declined', 'returned');
     }
 
     public function approvals()
     {
         abort_unless(Role::can('atl.approve'), 403);
 
-        return view('atl.index', ['atls' => DemoData::atls(), 'title' => 'Approval queue', 'preset' => 'Submitted']);
+        return view('atl.index', ['atls' => DemoData::atls(), 'title' => 'Approval queue', 'preset' => 'Submitted', 'mode' => 'all']);
     }
 
     public function create(Request $request)

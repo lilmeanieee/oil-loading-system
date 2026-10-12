@@ -4,7 +4,7 @@
     </x-slot>
 
     @php
-        $in = 'w-full rounded border-slate-300 text-sm focus:border-amber-500 focus:ring-amber-500';
+        $in = 'w-full rounded border-slate-300 text-sm focus:border-emerald-700 focus:ring-emerald-700';
         $lb = 'mb-1 block text-sm font-medium text-slate-700';
         $year = now()->format('Y');
         $startSo = $prefill['so_no'] ?? now()->format('Y-m-');
@@ -82,11 +82,11 @@
                         <legend class="{{ $lb }}">Driver</legend>
                         <div class="space-y-2">
                             <label class="flex items-center gap-2 text-sm text-slate-800">
-                                <input type="radio" value="default" x-model="driverMode" :disabled="!truck" class="text-amber-600 focus:ring-amber-500">
+                                <input type="radio" value="default" x-model="driverMode" :disabled="!truck" class="text-emerald-800 focus:ring-emerald-700">
                                 <span>Default driver: <strong x-text="truck ? truck.driver : 'choose a truck first'"></strong></span>
                             </label>
                             <label class="flex items-center gap-2 text-sm text-slate-800">
-                                <input type="radio" value="sub" x-model="driverMode" @change="if (!subDriver && truck) subDriver = truck.substitutes[0]" :disabled="!truck || truck.substitutes.length === 0" class="text-amber-600 focus:ring-amber-500">
+                                <input type="radio" value="sub" x-model="driverMode" @change="if (!subDriver && truck) subDriver = truck.substitutes[0]" :disabled="!truck || truck.substitutes.length === 0" class="text-emerald-800 focus:ring-emerald-700">
                                 <span>Sub-driver (the default driver is not available)</span>
                             </label>
                             <select x-show="driverMode === 'sub'" x-cloak x-model="subDriver" class="{{ $in }} max-w-sm" aria-label="Sub-driver">
@@ -127,7 +127,7 @@
                     </template>
                 </div>
                 <div class="mt-3 flex items-center justify-between">
-                    <button type="button" @click="items.push({ product: '', volume: '' })" class="text-sm font-medium text-amber-700 hover:underline">Add product</button>
+                    <button type="button" @click="items.push({ product: '', volume: '' })" class="text-sm font-medium text-emerald-800 hover:underline">Add product</button>
                     <p class="text-sm font-medium text-slate-800">Total requested: <span x-text="fmt(totalRequested)"></span> liters</p>
                 </div>
             </section>
@@ -135,7 +135,7 @@
             <section class="rounded border border-slate-200 bg-white p-5">
                 <div class="mb-1 flex flex-wrap items-center justify-between gap-2">
                     <h3 class="font-semibold text-slate-900">Compartment allocation</h3>
-                    <button type="button" @click="manual = false; autoAlloc()" x-show="truck" x-cloak class="text-sm font-medium text-amber-700 hover:underline">Assign automatically again</button>
+                    <button type="button" @click="manual = false; autoAlloc()" x-show="truck" x-cloak class="text-sm font-medium text-emerald-800 hover:underline">Assign automatically again</button>
                 </div>
                 <p class="mb-4 text-sm text-slate-600">
                     <span x-show="!manual">Filled in automatically from the product liters. You can change any compartment.</span>
@@ -189,7 +189,7 @@
                 <a href="{{ route('dashboard') }}" class="rounded border border-slate-300 bg-white px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">Cancel</a>
                 <button type="button" @click="preview = !preview" class="rounded border border-slate-300 bg-white px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" x-text="preview ? 'Hide preview' : 'Preview ATL'"></button>
                 <button type="submit" name="action" value="draft" formnovalidate class="rounded border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50">Save draft</button>
-                <button type="submit" name="action" value="submit" :disabled="errors.length > 0" class="rounded bg-amber-500 px-5 py-2 text-sm font-medium text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50">Submit for approval</button>
+                <button type="submit" name="action" value="submit" :disabled="errors.length > 0" class="rounded bg-[#1c3d34] px-5 py-2 text-sm font-medium text-white hover:bg-[#2a5a4c] disabled:cursor-not-allowed disabled:opacity-50">Submit for approval</button>
             </div>
         </div>
     </form>

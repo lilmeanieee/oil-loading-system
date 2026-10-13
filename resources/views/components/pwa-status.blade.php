@@ -1,7 +1,7 @@
 {{-- Offline indicator, waiting-to-sync list and messages. Filled in by public/pwa.js --}}
 <div class="fixed bottom-4 right-4 z-50 print:hidden">
     <button id="pwa-pill" type="button" hidden aria-expanded="false" aria-controls="pwa-panel"
-            class="rounded-full bg-slate-900 px-4 py-2 text-sm text-white shadow-lg ring-1 ring-amber-400 hover:bg-slate-800">
+            class="rounded-full bg-slate-900 px-4 py-2 text-sm text-white shadow-lg ring-1 ring-emerald-700 hover:bg-slate-800">
         <span id="pwa-pill-text"></span>
     </button>
 </div>
@@ -14,7 +14,7 @@
     <p id="pwa-panel-note" class="mt-1 text-slate-600"></p>
     <ul id="pwa-list" class="mt-3 space-y-2"></ul>
     <div class="mt-3 flex justify-end">
-        <button id="pwa-sync-now" type="button" class="rounded bg-amber-500 px-3 py-1.5 font-medium text-slate-900 hover:bg-amber-400">Sync now</button>
+        <button id="pwa-sync-now" type="button" class="rounded bg-[#1c3d34] px-3 py-1.5 font-medium text-white hover:bg-[#2a5a4c]">Sync now</button>
     </div>
 </section>
 
@@ -24,7 +24,7 @@
         <p class="text-xs text-slate-500" data-meta></p>
         <p class="text-xs text-red-700" data-error hidden></p>
         <div class="mt-1 flex gap-3 text-xs">
-            <button type="button" data-retry hidden class="font-medium text-amber-700 hover:underline">Try again</button>
+            <button type="button" data-retry hidden class="font-medium text-emerald-800 hover:underline">Try again</button>
             <button type="button" data-remove class="font-medium text-red-700 hover:underline">Remove</button>
         </div>
     </li>

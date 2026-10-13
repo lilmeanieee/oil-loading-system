@@ -4,10 +4,10 @@
     </x-slot>
 
     @php
-        $in = 'w-full rounded border-slate-300 text-sm focus:border-amber-500 focus:ring-amber-500';
+        $in = 'w-full rounded border-slate-300 text-sm focus:border-emerald-700 focus:ring-emerald-700';
         $ro = 'w-full rounded border-slate-200 bg-slate-100 text-sm text-slate-600';
         $lb = 'mb-1 block text-sm font-medium text-slate-700';
-        $cell = 'w-20 rounded border-slate-300 px-1 py-1 text-center text-sm focus:border-amber-500 focus:ring-amber-500';
+        $cell = 'w-20 rounded border-slate-300 px-1 py-1 text-center text-sm focus:border-emerald-700 focus:ring-emerald-700';
         $safety = ['Properly parked', 'Wheel chokes', 'Grounding wire', 'Valves closed', 'Fire extinguisher'];
         $docs = ['Order slip and/or ATL', 'Calibration certificate', 'Fire permit'];
         $ppe = ['Safety shoes', 'Hard hat', 'Gloves (cotton and nitrile)', 'Long-sleeve shirt or jacket', 'Fall protection harness', 'Respirator'];
@@ -142,7 +142,7 @@
             <div class="flex justify-end gap-3">
                 <a href="{{ route('dashboard') }}" class="rounded border border-slate-300 bg-white px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">Cancel</a>
                 <button type="submit" name="action" value="save" class="rounded border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50">Save ticket</button>
-                <button type="submit" name="action" value="confirm" class="rounded bg-amber-500 px-5 py-2 text-sm font-medium text-slate-900 hover:bg-amber-400">Confirm actual liters</button>
+                <button type="submit" name="action" value="confirm" class="rounded bg-[#1c3d34] px-5 py-2 text-sm font-medium text-white hover:bg-[#2a5a4c]">Confirm actual liters</button>
             </div>
         </div>
     </form>

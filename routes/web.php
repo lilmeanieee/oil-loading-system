@@ -1,12 +1,15 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AtlController;
+use App\Http\Controllers\AuthDemoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoadingTicketController;
+use App\Http\Controllers\ManagementController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PwaController;
 use App\Http\Controllers\ReleaseController;
-use App\Http\Controllers\TruckMasterController;
+use App\Http\Controllers\HaulerManagementController;
 use App\Http\Controllers\Auth\VerifyCodeController;
 use App\Support\Role;
 use Illuminate\Http\Request;
@@ -19,6 +22,15 @@ Route::redirect('/', '/login');
 // Offline support: reachable without signing in so the page can check its connection.
 Route::get('/pwa/ping', [PwaController::class, 'ping'])->name('pwa.ping');
 
+// Registration: request an account, verify the email, wait for admin approval.
+Route::middleware('guest')->group(function () {
+    Route::get('/register', [AuthDemoController::class, 'register'])->name('register');
+    Route::post('/register', [AuthDemoController::class, 'storeRegister'])->name('register.store');
+    Route::get('/register/verify', [AuthDemoController::class, 'verify'])->name('register.verify');
+    Route::post('/register/verify', [AuthDemoController::class, 'confirm'])->name('register.confirm');
+    Route::get('/register/pending', [AuthDemoController::class, 'pending'])->name('register.pending');
+});
+
 Route::middleware('auth')->group(function () {
     Route::get('/pwa/csrf', [PwaController::class, 'csrf'])->name('pwa.csrf');
     Route::get('/pwa/urls', [PwaController::class, 'urls'])->name('pwa.urls');
@@ -27,6 +39,9 @@ Route::middleware('auth')->group(function () {
 
     // Authority to Load
     Route::get('/atl', [AtlController::class, 'index'])->name('atl.index');
+    Route::get('/my-atl', [AtlController::class, 'mine'])->name('atl.mine');
+    Route::get('/drafts', [AtlController::class, 'drafts'])->name('atl.drafts');
+    Route::get('/returned', [AtlController::class, 'returned'])->name('atl.returned');
     Route::get('/atl/create', [AtlController::class, 'create'])->name('atl.create');
     Route::post('/atl', [AtlController::class, 'store'])->name('atl.store');
     Route::get('/atl/{id}', [AtlController::class, 'show'])->whereNumber('id')->name('atl.show');
@@ -45,7 +60,25 @@ Route::middleware('auth')->group(function () {
     Route::post('/releases', [ReleaseController::class, 'store'])->name('releases.store');
 
     // Master data
-    Route::get('/trucks', [TruckMasterController::class, 'index'])->name('trucks.index');
+    Route::get('/hauler-management', [HaulerManagementController::class, 'index'])->name('haulers.index');
+    // Old URLs still work and open the matching tab.
+    Route::redirect('/trucks', '/hauler-management?tab=trucks')->name('trucks.index');
+    Route::redirect('/drivers', '/hauler-management?tab=drivers')->name('drivers.index');
+    Route::redirect('/haulers', '/hauler-management');
+    Route::get('/products', [ManagementController::class, 'products'])->name('products.index');
+
+    // Admin / IT
+    Route::get('/admin/users', [ManagementController::class, 'users'])->name('users.index');
+    Route::post('/admin/users/{id}/approve', [ManagementController::class, 'approveUser'])->whereNumber('id')->name('users.approve');
+    Route::post('/admin/users/{id}/reject', [ManagementController::class, 'rejectUser'])->whereNumber('id')->name('users.reject');
+    Route::post('/admin/users/{id}/toggle', [ManagementController::class, 'toggleUser'])->whereNumber('id')->name('users.toggle');
+    Route::post('/admin/users/{id}/role', [ManagementController::class, 'changeRole'])->whereNumber('id')->name('users.role');
+
+    // Reports, audit, settings, my account
+    Route::get('/reports', [ManagementController::class, 'reports'])->name('reports.index');
+    Route::get('/audit', [ManagementController::class, 'audit'])->name('audit.index');
+    Route::get('/settings', [ManagementController::class, 'settings'])->name('settings.index');
+    Route::get('/account', [AccountController::class, 'show'])->name('account.show');
 
     Route::post('/developer/view-as', function (Request $request) {
     abort_unless(Role::isDeveloper(), 403);

@@ -1,11 +1,11 @@
-/* Service worker for the Oil Loading System.
+/* Service worker for PA Fuel 118.
    - Pages you open are saved, so they open again without internet.
    - Styles, scripts and fonts are saved the first time they load.
    - Anything that sends data (POST) is never cached here. The page script (pwa.js) queues those. */
-const VERSION = 'v1';
-const SHELL = 'oil-shell-' + VERSION;
-const PAGES = 'oil-pages-' + VERSION;
-const ASSETS = 'oil-assets-' + VERSION;
+const VERSION = 'v2';
+const SHELL = 'pafuel118-shell-' + VERSION;
+const PAGES = 'pafuel118-pages-' + VERSION;
+const ASSETS = 'pafuel118-assets-' + VERSION;
 const KEEP = [SHELL, PAGES, ASSETS];
 
 self.addEventListener('install', (event) => {

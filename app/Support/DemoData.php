@@ -19,10 +19,9 @@ class DemoData
     public static function products(): array
     {
         return [
-            ['atl' => 'EXTREME 95', 'ticket' => 'R95', 'doc' => 'MOGAS R95', 'tax_note' => ''],
-            ['atl' => 'EXTREME U', 'ticket' => 'R91', 'doc' => 'MOGAS R91', 'tax_note' => ''],
-            ['atl' => 'EXCEED DIESEL', 'ticket' => 'ADO', 'doc' => 'DIESEL', 'tax_note' => 'CME 3%'],
-            ['atl' => 'ETHANOL', 'ticket' => 'ETH', 'doc' => 'ETHANOL', 'tax_note' => ''],
+            ['atl' => 'R95', 'ticket' => 'R95', 'doc' => 'MOGAS R95', 'tax_note' => ''],
+            ['atl' => 'R91', 'ticket' => 'R91', 'doc' => 'MOGAS R91', 'tax_note' => ''],
+            ['atl' => 'DIESEL', 'ticket' => 'ADO', 'doc' => 'DIESEL', 'tax_note' => 'CME 3%'],
         ];
     }
 
@@ -102,15 +101,15 @@ class DemoData
                 'id' => 524, 'so_no' => '2026-10-0655', 'control_no' => '2026-423', 'date' => '2026-10-08',
                 'authorized' => 'Romel Monin', 'hauler' => 'South Oil Corporation', 'plate' => 'LAN-1731', 'capacity' => '30KL',
                 'destination' => 'Surallah', 'creator' => 'Ma\'am Jhona', 'status' => 'Draft',
-                'items' => [['product' => 'EXTREME U', 'volume' => 15000]], 'plan' => [],
+                'items' => [['product' => 'R91', 'volume' => 15000]], 'plan' => [],
                 'timeline' => [['label' => 'Draft saved', 'by' => 'Ma\'am Jhona', 'at' => '2026-10-08 09:10', 'note' => '']],
             ],
             $b + [
                 'id' => 523, 'so_no' => '2026-10-0652', 'control_no' => '2026-422', 'date' => '2026-10-08',
                 'authorized' => 'Romel Monin', 'hauler' => 'South Oil Corporation', 'plate' => 'LAN-1731', 'capacity' => '30KL',
                 'destination' => 'Tupi', 'creator' => 'Ma\'am Jhona', 'status' => 'Submitted',
-                'items' => [['product' => 'EXTREME 95', 'volume' => 15000], ['product' => 'EXCEED DIESEL', 'volume' => 15000]],
-                'plan' => self::plan([[5000, 'EXCEED DIESEL'], [3000, 'EXCEED DIESEL'], [3000, 'EXTREME 95'], [3000, 'EXCEED DIESEL'], [6000, 'EXTREME 95'], [6000, 'EXTREME 95'], [4000, 'EXCEED DIESEL']]),
+                'items' => [['product' => 'R95', 'volume' => 15000], ['product' => 'DIESEL', 'volume' => 15000]],
+                'plan' => self::plan([[5000, 'DIESEL'], [3000, 'DIESEL'], [3000, 'R95'], [3000, 'DIESEL'], [6000, 'R95'], [6000, 'R95'], [4000, 'DIESEL']]),
                 'timeline' => [
                     ['label' => 'Draft saved', 'by' => 'Ma\'am Jhona', 'at' => '2026-10-08 08:40', 'note' => ''],
                     ['label' => 'Submitted for approval', 'by' => 'Ma\'am Jhona', 'at' => '2026-10-08 08:55', 'note' => ''],
@@ -121,8 +120,8 @@ class DemoData
                 'authorized' => 'Melvin Pacheco', 'hauler' => 'Toto Alba Bulilit Gasoline Station', 'plate' => 'LAJ 3616', 'capacity' => '30KL',
                 'destination' => 'Bulilit', 'creator' => 'Ma\'am Jhona', 'status' => 'Declined',
                 'decline_reason' => 'Compartment 3 is over capacity. Correct the allocation and resubmit.',
-                'items' => [['product' => 'EXTREME 95', 'volume' => 20000], ['product' => 'EXTREME U', 'volume' => 10000]],
-                'plan' => self::plan([[6000, 'EXTREME 95'], [6000, 'EXTREME 95'], [5000, 'EXTREME 95'], [3000, 'EXTREME 95'], [4000, 'EXTREME U'], [2000, 'EXTREME U'], [2000, 'EXTREME U'], [2000, 'EXTREME U']]),
+                'items' => [['product' => 'R95', 'volume' => 20000], ['product' => 'R91', 'volume' => 10000]],
+                'plan' => self::plan([[6000, 'R95'], [6000, 'R95'], [5000, 'R95'], [3000, 'R95'], [4000, 'R91'], [2000, 'R91'], [2000, 'R91'], [2000, 'R91']]),
                 'timeline' => [
                     ['label' => 'Submitted for approval', 'by' => 'Ma\'am Jhona', 'at' => '2026-10-07 14:05', 'note' => ''],
                     ['label' => 'Declined', 'by' => 'Ma\'am Joy', 'at' => '2026-10-07 14:30', 'note' => 'Compartment 3 is over capacity. Correct the allocation and resubmit.'],
@@ -132,8 +131,8 @@ class DemoData
                 'id' => 521, 'so_no' => '2026-10-0646', 'control_no' => '2026-420', 'date' => '2026-10-01',
                 'authorized' => 'Melvin Pacheco', 'hauler' => 'Toto Alba Bulilit Gasoline Station', 'plate' => 'LAJ 3616', 'capacity' => '30KL',
                 'destination' => 'Bulilit', 'creator' => 'Ma\'am Jhona', 'status' => 'Loading',
-                'items' => [['product' => 'EXTREME 95', 'volume' => 18000], ['product' => 'EXTREME U', 'volume' => 6000], ['product' => 'EXCEED DIESEL', 'volume' => 6000]],
-                'plan' => self::plan([[6000, 'EXTREME 95'], [6000, 'EXTREME 95'], [4000, 'EXTREME 95'], [2000, 'EXTREME 95'], [4000, 'EXTREME U'], [2000, 'EXTREME U'], [2000, 'EXCEED DIESEL'], [4000, 'EXCEED DIESEL']]),
+                'items' => [['product' => 'R95', 'volume' => 18000], ['product' => 'R91', 'volume' => 6000], ['product' => 'DIESEL', 'volume' => 6000]],
+                'plan' => self::plan([[6000, 'R95'], [6000, 'R95'], [4000, 'R95'], [2000, 'R95'], [4000, 'R91'], [2000, 'R91'], [2000, 'DIESEL'], [4000, 'DIESEL']]),
                 'docs_issued' => true,
                 'timeline' => [
                     ['label' => 'Submitted for approval', 'by' => 'Ma\'am Jhona', 'at' => '2026-10-01 07:50', 'note' => ''],
@@ -146,8 +145,8 @@ class DemoData
                 'id' => 520, 'so_no' => '2026-09-0605', 'control_no' => '2026-419', 'date' => '2026-09-30',
                 'authorized' => 'Romel Monin', 'hauler' => 'South Oil Corporation', 'plate' => 'LAN-1731', 'capacity' => '30KL',
                 'total_seals' => '15 PCS', 'destination' => 'Surallah', 'creator' => 'Ma\'am Jhona', 'status' => 'Approved',
-                'items' => [['product' => 'EXTREME 95', 'volume' => 12000], ['product' => 'EXTREME U', 'volume' => 10000], ['product' => 'EXCEED DIESEL', 'volume' => 8000]],
-                'plan' => self::plan([[5000, 'EXCEED DIESEL'], [3000, 'EXCEED DIESEL'], [3000, 'EXTREME U'], [3000, 'EXTREME U'], [6000, 'EXTREME 95'], [6000, 'EXTREME 95'], [4000, 'EXTREME U']]),
+                'items' => [['product' => 'R95', 'volume' => 12000], ['product' => 'R91', 'volume' => 10000], ['product' => 'DIESEL', 'volume' => 8000]],
+                'plan' => self::plan([[5000, 'DIESEL'], [3000, 'DIESEL'], [3000, 'R91'], [3000, 'R91'], [6000, 'R95'], [6000, 'R95'], [4000, 'R91']]),
                 'timeline' => [
                     ['label' => 'Submitted for approval', 'by' => 'Ma\'am Jhona', 'at' => '2026-09-30 10:00', 'note' => ''],
                     ['label' => 'Approved', 'by' => 'Ma\'am Joy', 'at' => '2026-09-30 10:20', 'note' => ''],
@@ -157,7 +156,7 @@ class DemoData
                 'id' => 519, 'so_no' => '2026-09-0590', 'control_no' => '2026-418', 'date' => '2026-09-29',
                 'authorized' => 'Juan Dela Cruz', 'hauler' => 'Sample Hauling Inc.', 'plate' => 'GAB 4521', 'capacity' => '20KL',
                 'destination' => 'Koronadal', 'creator' => 'Ma\'am Jhona', 'status' => 'Completed',
-                'items' => [['product' => 'EXCEED DIESEL', 'volume' => 20000]], 'plan' => [], 'docs_issued' => true, 'actual' => 20000,
+                'items' => [['product' => 'DIESEL', 'volume' => 20000]], 'plan' => [], 'docs_issued' => true, 'actual' => 20000,
                 'timeline' => [
                     ['label' => 'Approved', 'by' => 'Ma\'am Joy', 'at' => '2026-09-29 09:00', 'note' => ''],
                     ['label' => 'Documents issued', 'by' => 'Ma\'am Joy', 'at' => '2026-09-29 09:20', 'note' => ''],
@@ -168,7 +167,7 @@ class DemoData
                 'id' => 518, 'so_no' => '2026-09-0577', 'control_no' => '2026-417', 'date' => '2026-09-29',
                 'authorized' => 'Romel Monin', 'hauler' => 'South Oil Corporation', 'plate' => 'LAN-1731', 'capacity' => '30KL',
                 'destination' => 'Tupi', 'creator' => 'Ma\'am Jhona', 'status' => 'Completed',
-                'items' => [['product' => 'EXTREME U', 'volume' => 30000]], 'plan' => [], 'docs_issued' => true, 'actual' => 30000,
+                'items' => [['product' => 'R91', 'volume' => 30000]], 'plan' => [], 'docs_issued' => true, 'actual' => 30000,
                 'timeline' => [
                     ['label' => 'Approved', 'by' => 'Ma\'am Joy', 'at' => '2026-09-29 07:30', 'note' => ''],
                     ['label' => 'Completed', 'by' => 'Ma\'am Joy', 'at' => '2026-09-29 10:05', 'note' => 'Actual 30,000 L confirmed'],
@@ -216,5 +215,99 @@ class DemoData
     public static function nextNumbers(): array
     {
         return ['dr' => '1190', 'wcp' => 'WCP2025 02460098'];
+    }
+
+    // ---------- Accounts, master data, monitoring (demo) ----------
+
+    public static function users(): array
+    {
+        return [
+            ['id' => 1, 'name' => 'Test User', 'email' => 'test@test.com', 'role' => 'admin', 'status' => 'Active', 'last_login' => '2026-10-12 08:05'],
+            ['id' => 2, 'name' => 'Ma\'am Jhona', 'email' => 'jhona@example.com', 'role' => 'atl_user', 'status' => 'Active', 'last_login' => '2026-10-12 07:58'],
+            ['id' => 3, 'name' => 'Ma\'am Joy', 'email' => 'joy@example.com', 'role' => 'operations', 'status' => 'Active', 'last_login' => '2026-10-11 17:02'],
+            ['id' => 4, 'name' => 'Owner Account', 'email' => 'owner@example.com', 'role' => 'owner', 'status' => 'Inactive', 'last_login' => '2026-09-30 10:12'],
+        ];
+    }
+
+    public static function registrations(): array
+    {
+        return [
+            ['id' => 11, 'name' => 'Maria Santos', 'email' => 'maria.santos@example.com', 'requested' => 'atl_user', 'verified' => true, 'registered' => '2026-10-11 16:20'],
+            ['id' => 12, 'name' => 'Carlo Reyes', 'email' => 'carlo.reyes@example.com', 'requested' => 'operations', 'verified' => false, 'registered' => '2026-10-12 07:45'],
+        ];
+    }
+
+    public static function drivers(): array
+    {
+        return [
+            ['id' => 1, 'name' => 'Romel Monin', 'contact' => '0917 000 0001', 'license_no' => 'N01-23-000111', 'license_expiry' => '2028-04-12', 'status' => 'Active', 'default_for' => 'LAN-1731', 'sub_for' => []],
+            ['id' => 2, 'name' => 'Pedro Santos', 'contact' => '0917 000 0002', 'license_no' => 'N01-22-000222', 'license_expiry' => '2027-08-30', 'status' => 'Active', 'default_for' => '', 'sub_for' => ['LAN-1731']],
+            ['id' => 3, 'name' => 'Melvin Pacheco', 'contact' => '0917 000 0003', 'license_no' => 'N02-21-000333', 'license_expiry' => '2026-10-28', 'status' => 'Active', 'default_for' => 'LAJ 3616', 'sub_for' => []],
+            ['id' => 4, 'name' => 'Ramon Cruz', 'contact' => '0917 000 0004', 'license_no' => 'N02-20-000444', 'license_expiry' => '2027-02-02', 'status' => 'Active', 'default_for' => '', 'sub_for' => ['LAJ 3616']],
+            ['id' => 5, 'name' => 'Juan Dela Cruz', 'contact' => '0917 000 0005', 'license_no' => 'N03-19-000555', 'license_expiry' => '2026-08-15', 'status' => 'Inactive', 'default_for' => 'GAB 4521', 'sub_for' => []],
+        ];
+    }
+
+    public static function haulers(): array
+    {
+        $trucks = self::trucks();
+
+        return array_map(function ($h) use ($trucks) {
+            $mine = array_values(array_filter($trucks, fn ($t) => $t['hauler'] === $h['name']));
+            $h['plates'] = array_column($mine, 'plate');
+            $h['drivers'] = array_values(array_unique(array_merge(...array_map(fn ($t) => array_merge([$t['driver']], $t['substitutes']), $mine ?: [['driver' => '', 'substitutes' => []]]))));
+            $h['drivers'] = array_values(array_filter($h['drivers']));
+
+            return $h;
+        }, [
+            ['id' => 1, 'name' => 'South Oil Corporation', 'contact' => 'Operations desk', 'phone' => '0917 100 0001', 'address' => 'Not recorded', 'status' => 'Active'],
+            ['id' => 2, 'name' => 'Toto Alba Bulilit Gasoline Station', 'contact' => 'Toto Alba', 'phone' => '0917 100 0002', 'address' => 'Bulilit', 'status' => 'Active'],
+            ['id' => 3, 'name' => 'Sample Hauling Inc.', 'contact' => 'Dispatcher', 'phone' => '0917 100 0003', 'address' => 'Koronadal', 'status' => 'Active'],
+        ]);
+    }
+
+    public static function audit(): array
+    {
+        return [
+            ['at' => '2026-10-12 08:05', 'user' => 'Test User', 'type' => 'Security event', 'event' => 'Signed in', 'details' => 'Email code verified', 'source' => 'Chrome, Windows'],
+            ['at' => '2026-10-12 07:47', 'user' => 'carlo.reyes@example.com', 'type' => 'Security event', 'event' => 'Wrong verification code', 'details' => '3 wrong codes, resend locked for 60 seconds', 'source' => 'Edge, Windows'],
+            ['at' => '2026-10-12 07:45', 'user' => 'carlo.reyes@example.com', 'type' => 'User action', 'event' => 'Registration request', 'details' => 'Requested role: Operations', 'source' => 'Edge, Windows'],
+            ['at' => '2026-10-11 17:02', 'user' => 'Ma\'am Joy', 'type' => 'User action', 'event' => 'Approved ATL', 'details' => 'ATL#520', 'source' => 'Edge, Windows'],
+            ['at' => '2026-10-11 16:40', 'user' => 'Test User', 'type' => 'Data change', 'event' => 'Truck certificate updated', 'details' => 'LAJ 3616 CR expiry: 2026-09-22 to 2026-10-22', 'source' => 'Chrome, Windows'],
+            ['at' => '2026-10-11 16:20', 'user' => 'maria.santos@example.com', 'type' => 'User action', 'event' => 'Registration request', 'details' => 'Requested role: ATL User, email verified', 'source' => 'Chrome, Android'],
+            ['at' => '2026-10-10 09:30', 'user' => 'Ma\'am Joy', 'type' => 'Data change', 'event' => 'Offline items synced', 'details' => '1 loading ticket sent, 1 conflict', 'source' => 'Bawing laptop'],
+            ['at' => '2026-10-07 14:30', 'user' => 'Ma\'am Joy', 'type' => 'User action', 'event' => 'Declined ATL', 'details' => 'ATL#522: Compartment 3 is over capacity', 'source' => 'Edge, Windows'],
+            ['at' => '2026-10-01 08:30', 'user' => 'Ma\'am Joy', 'type' => 'User action', 'event' => 'Printed documents', 'details' => 'DR 1189, WCP2025 02460097', 'source' => 'Edge, Windows'],
+        ];
+    }
+
+    public static function devices(): array
+    {
+        return [
+            ['label' => 'Marbel office PC (Chrome)', 'user' => 'Ma\'am Jhona', 'last_sync' => '2026-10-12 08:15', 'waiting' => 0, 'state' => 'OK'],
+            ['label' => 'Bawing office PC (Edge)', 'user' => 'Ma\'am Joy', 'last_sync' => '2026-10-11 17:02', 'waiting' => 2, 'state' => 'Offline'],
+            ['label' => 'Bawing laptop (Chrome)', 'user' => 'Ma\'am Joy', 'last_sync' => '2026-10-10 09:30', 'waiting' => 1, 'state' => 'Conflict'],
+        ];
+    }
+
+    public static function notifications(string $role): array
+    {
+        return [
+            'atl_user'   => [['text' => 'ATL#520 was approved.', 'at' => '2026-09-30 10:20'], ['text' => 'ATL#522 was returned: compartment 3 is over capacity.', 'at' => '2026-10-07 14:30']],
+            'operations' => [['text' => 'ATL#523 is waiting for your decision.', 'at' => '2026-10-08 08:55']],
+            'admin'      => [['text' => '2 account requests are waiting for approval.', 'at' => '2026-10-12 07:45'], ['text' => '1 offline device has a sync conflict.', 'at' => '2026-10-10 09:30']],
+            'owner'      => [],
+        ][$role] ?? [];
+    }
+
+    public static function documentActivity(): array
+    {
+        return [
+            ['at' => '2026-10-01 08:30', 'doc' => 'Delivery Receipt', 'no' => '1189', 'atl' => 'ATL#521', 'event' => 'Printed', 'user' => 'Ma\'am Joy'],
+            ['at' => '2026-10-01 08:30', 'doc' => 'Withdrawal Certificate', 'no' => 'WCP2025 02460097', 'atl' => 'ATL#521', 'event' => 'Printed', 'user' => 'Ma\'am Joy'],
+            ['at' => '2026-10-01 09:15', 'doc' => 'Delivery Receipt', 'no' => '1189', 'atl' => 'ATL#521', 'event' => 'Released to driver', 'user' => 'Ma\'am Joy'],
+            ['at' => '2026-09-29 09:20', 'doc' => 'Delivery Receipt', 'no' => '1188', 'atl' => 'ATL#519', 'event' => 'Printed', 'user' => 'Ma\'am Joy'],
+            ['at' => '2026-09-29 11:50', 'doc' => 'Delivery Receipt', 'no' => '1188', 'atl' => 'ATL#519', 'event' => 'Reprinted', 'user' => 'Ma\'am Joy'],
+        ];
     }
 }

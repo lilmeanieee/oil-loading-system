@@ -1,7 +1,4 @@
-<x-app-layout>
-    <x-slot name="header"><h2 class="text-xl font-semibold text-slate-800">Truck master</h2></x-slot>
-
-    @php
+@php
         $in = 'w-full rounded border-slate-300 text-sm focus:border-amber-500 focus:ring-amber-500';
         $lb = 'mb-1 block text-sm font-medium text-slate-700';
         $badge = ['Valid' => 'bg-emerald-100 text-emerald-800', 'Expiring soon' => 'bg-amber-100 text-amber-800', 'Expired' => 'bg-red-100 text-red-800'];
@@ -24,8 +21,49 @@
                     <h3 class="mb-3 font-semibold text-slate-900">Truck</h3>
                     <div class="grid gap-4 sm:grid-cols-2">
                         <div><label class="{{ $lb }}" for="t_plate">Plate number</label><input id="t_plate" class="{{ $in }}" required></div>
-                        <div><label class="{{ $lb }}" for="t_hauler">Truck owner or hauling company</label><input id="t_hauler" class="{{ $in }}" required></div>
-                        <div><label class="{{ $lb }}" for="t_driver">Default driver</label><input id="t_driver" class="{{ $in }}" required></div>
+                        <div x-data="{ q: '', known: @js(collect($haulers)->pluck('name')->values()), asking: false, created: false,
+                                      get exists() { return this.known.some(k => k.toLowerCase() === this.q.trim().toLowerCase()) },
+                                      check() { this.created = false; this.asking = this.q.trim() !== '' && !this.exists },
+                                      confirmNew() { this.known.push(this.q.trim()); this.asking = false; this.created = true } }">
+                            <label class="{{ $lb }}" for="t_hauler">Truck owner or hauling company</label>
+                            <input id="t_hauler" list="hauler_list" x-model="q" @change="check()" autocomplete="off" placeholder="Search or type a company name" class="{{ $in }}" required>
+                            <datalist id="hauler_list"><template x-for="k in known" :key="k"><option :value="k"></option></template></datalist>
+                            <div x-show="asking" x-cloak class="mt-2 rounded border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+                                <p>"<span x-text="q.trim()"></span>" is not in the Haulers list. Create it as a new hauler and link it to this truck?</p>
+                                <div class="mt-2 flex gap-2">
+                                    <button type="button" @click="confirmNew()" class="rounded bg-slate-900 px-3 py-1 text-white hover:bg-slate-700">Yes, create hauler</button>
+                                    <button type="button" @click="q = ''; asking = false" class="rounded border border-slate-300 bg-white px-3 py-1 text-slate-700 hover:bg-slate-50">No, choose another</button>
+                                </div>
+                            </div>
+                            <p x-show="created" x-cloak class="mt-1 text-sm text-emerald-800">New hauler will be added to the Haulers tab when the truck is saved. (Demo only.)</p>
+                        </div>
+                        <div x-data="{ list: @js(collect($drivers)->map(fn ($x) => ['name' => $x['name'], 'default_for' => $x['default_for'] ?? ''])->values()),
+                                      sel: '', adding: false, nd: { name: '', license: '', expiry: '', contact: '' }, reassign: false,
+                                      get current() { return this.list.find(x => x.name === this.sel) },
+                                      pick() { this.adding = (this.sel === '__new'); this.reassign = false },
+                                      saveNew() { if (!this.nd.name.trim() || !this.nd.license.trim() || !this.nd.expiry) return; this.list.push({ name: this.nd.name.trim(), default_for: '' }); this.sel = this.nd.name.trim(); this.adding = false; this.nd = { name: '', license: '', expiry: '', contact: '' } } }">
+                            <label class="{{ $lb }}" for="t_driver">Default driver</label>
+                            <select id="t_driver" x-model="sel" @change="pick()" class="{{ $in }}" required>
+                                <option value="">Select a driver</option>
+                                <template x-for="x in list" :key="x.name"><option :value="x.name" x-text="x.name"></option></template>
+                                <option value="__new">+ Add New Driver</option>
+                            </select>
+                            <div x-show="current && current.default_for" x-cloak class="mt-2 rounded border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+                                <p>This driver is already the default driver of <span class="font-medium" x-text="current && current.default_for"></span>.</p>
+                                <label class="mt-1 flex items-center gap-2"><input type="checkbox" x-model="reassign" class="rounded border-slate-300"> Reassign the driver to this truck (the other truck will have no default driver)</label>
+                            </div>
+                            <div x-show="adding" x-cloak class="mt-2 grid gap-2 rounded border border-slate-200 bg-slate-50 p-3 sm:grid-cols-2">
+                                <input x-model="nd.name" placeholder="Full name" aria-label="New driver name" class="{{ $in }}">
+                                <input x-model="nd.contact" placeholder="Contact number" aria-label="New driver contact" class="{{ $in }}">
+                                <input x-model="nd.license" placeholder="License number" aria-label="New driver license number" class="{{ $in }}">
+                                <input x-model="nd.expiry" type="date" aria-label="License expiry date" class="{{ $in }}">
+                                <div class="flex gap-2 sm:col-span-2">
+                                    <button type="button" @click="saveNew()" class="rounded bg-slate-900 px-3 py-1 text-sm text-white hover:bg-slate-700">Save driver and select</button>
+                                    <button type="button" @click="adding = false; sel = ''" class="rounded border border-slate-300 bg-white px-3 py-1 text-sm text-slate-700 hover:bg-slate-50">Cancel</button>
+                                </div>
+                                <p class="text-xs text-slate-500 sm:col-span-2">The new driver is saved to the Drivers tab and set as this truck's default driver. (Demo only.)</p>
+                            </div>
+                        </div>
                         <div><label class="{{ $lb }}" for="t_subs">Authorized substitute drivers (one per line)</label><textarea id="t_subs" rows="2" class="{{ $in }}"></textarea></div>
                         <div><label class="{{ $lb }}" for="t_total">Total capacity (liters)</label><input id="t_total" type="number" min="0" x-model="total" class="{{ $in }}" required></div>
                         <div>
@@ -142,4 +180,3 @@
             }
         }
     </script>
-</x-app-layout>

@@ -1,40 +1,19 @@
-@php
-    $can = fn ($p) => \App\Support\Role::can($p);
-    $groups = [
-        'Main' => [['Dashboard', 'dashboard', 'dashboard', true]],
-        'ATL' => [
-            ['Create ATL', 'atl.create', 'atl.create', $can('atl.create')],
-            ['ATL records', 'atl.index', 'atl.index', $can('atl.view')],
-            ['Approvals', 'approvals.index', 'approvals.*', $can('atl.approve')],
-        ],
-        'Records' => [
-            ['Trucks', 'trucks.index', 'trucks.*', $can('trucks.view')],
-            ['Documents', 'documents.index', 'documents.*', $can('documents.menu')],
-        ],
-    ];
-@endphp
-
 <div x-show="sidebar" x-cloak @click="sidebar = false" class="fixed inset-0 z-30 bg-black/40 lg:hidden print:hidden"></div>
 
-<aside class="fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-slate-900 transition-transform lg:sticky lg:top-0 lg:h-screen lg:shrink-0 lg:translate-x-0 print:hidden"
+<aside class="fixed inset-y-0 left-0 z-40 flex w-64 shrink-0 flex-col bg-[#eef5f1] pt-16 transition-transform lg:static lg:translate-x-0 lg:pt-0 print:hidden"
        :class="sidebar ? 'translate-x-0' : '-translate-x-full'">
-    <div class="flex items-center justify-between px-5 py-5">
-        <a href="{{ route('dashboard') }}" class="font-semibold text-amber-400">Oil Loading System</a>
-        <button type="button" @click="sidebar = false" class="text-sm text-slate-400 hover:text-white lg:hidden">Close</button>
+    <div class="flex items-center justify-between px-5 pt-4 lg:hidden">
+        <span class="font-semibold text-[#1c3d34]">Menu</span>
+        <button type="button" @click="sidebar = false" class="text-sm text-slate-600 hover:text-slate-900">Close</button>
     </div>
 
-    <nav class="flex-1 space-y-5 overflow-y-auto px-3 pb-4" aria-label="Main menu">
-        @foreach ($groups as $heading => $items)
-            @php $items = array_filter($items, fn ($l) => $l[3]); @endphp
-            @if ($items)
-                <div>
-                    <p class="px-3 pb-1 text-xs text-slate-500">{{ $heading }}</p>
-                    @foreach ($items as [$label, $route, $pattern])
-                        <a href="{{ route($route) }}" @if (request()->routeIs($pattern)) aria-current="page" @endif
-                           class="block rounded px-3 py-2 text-sm {{ request()->routeIs($pattern) ? 'bg-slate-700 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">{{ $label }}</a>
-                    @endforeach
-                </div>
-            @endif
+    <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4" aria-label="Main menu">
+        @foreach (\App\Support\Role::menu() as [$label, $route, $pattern, $icon])
+            <a href="{{ route($route) }}" @if (request()->routeIs(...explode('|', $pattern))) aria-current="page" @endif
+               class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm {{ request()->routeIs(...explode('|', $pattern)) ? 'bg-[#d9eadf] font-medium text-[#1c3d34]' : 'text-slate-700 hover:bg-[#e2efe8]' }}">
+                <x-icon :name="$icon" class="h-5 w-5 shrink-0" />
+                <span>{{ $label }}</span>
+            </a>
         @endforeach
     </nav>
 

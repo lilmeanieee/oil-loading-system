@@ -3,6 +3,11 @@
 namespace App\Support;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * DEMO ONLY. Lets the front-end preview each role's menus and buttons.
+ * The backend developer replaces this with real roles and Laravel policies or gates.
+ * If the users table gets a "role" column, current() already reads it.
+ */
 class Role
 {
     public const DEVELOPER = 'developer';
@@ -11,6 +16,14 @@ class Role
         'operations' => 'Operations',
         'admin'      => 'Admin / IT',
         'owner'      => 'Owner',
+        'developer'  => 'Developer',
+    ];
+
+    private const PORTAL = [
+        'atl_user'   => '',
+        'operations' => 'OPERATIONS PORTAL',
+        'admin'      => 'ADMIN PORTAL',
+        'owner'      => 'MANAGEMENT PORTAL',
     ];
 
     private const MATRIX = [
@@ -20,38 +33,15 @@ class Role
         'owner'      => ['atl.view', 'trucks.view', 'documents.view', 'documents.menu', 'reports.view', 'audit.view'],
     ];
 
- 
+    public static function current(): string
+    {
+        $role = optional(auth()->user())->role ?? session('demo_role', 'operations');
 
+        return array_key_exists($role, self::LABELS) ? $role : 'operations';
+    }
 
     public static function can(string $permission): bool
     {
         return in_array($permission, self::MATRIX[self::current()], true);
     }
-    
-    public static function actual(): string
-    {
-    $role = Auth::user()?->role ?? '';
-
-    return ($role === self::DEVELOPER || array_key_exists($role, self::LABELS)) ? $role : 'atl_user';
 }
-
-    public static function isDeveloper(): bool
-    {
-        return self::actual() === self::DEVELOPER;
-    }
-
-    public static function current(): string
-    {
-        $actual = self::actual();
-
-        if ($actual === self::DEVELOPER) {
-            $view = session('view_as', '');
-
-            return array_key_exists($view, self::LABELS) ? $view : 'operations';
-        }
-
-        return $actual;
-    }
-        
-}
-

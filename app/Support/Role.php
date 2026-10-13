@@ -63,46 +63,37 @@ class Role
     /** Interfaces a Developer can switch between. */
     public const VIEWABLE = ['atl_user', 'operations', 'admin', 'owner'];
 
-    /** The signed-in person's own role. */
+    /** The signed-in person's own role (from users.role). Falls back to the lowest-privilege role. */
     public static function actual(): string
     {
-        $role = optional(auth()->user())->role ?? session('demo_role', 'operations');
+        $role = Auth::user()?->role ?? '';
 
-        return array_key_exists($role, self::LABELS) ? $role : 'operations';
+        return ($role === self::DEVELOPER || array_key_exists($role, self::LABELS)) ? $role : 'atl_user';
     }
 
     public static function isDeveloper(): bool
     {
-        return self::actual() === 'developer';
+        return self::actual() === self::DEVELOPER;
     }
 
-    /** Real accounts with a fixed role cannot switch. Developers, and demo mode without a role column, can. */
+    /** Only Developers can switch the interface they are viewing. */
     public static function canSwitch(): bool
     {
-        return self::isDeveloper() || empty(optional(auth()->user())->role);
+        return self::isDeveloper();
     }
 
-    public static function setView(string $role): void
-    {
-        if (self::isDeveloper() && in_array($role, self::VIEWABLE, true)) {
-            session(['dev_view' => $role]);
-        } elseif (empty(optional(auth()->user())->role) && array_key_exists($role, self::LABELS)) {
-            session(['demo_role' => $role]);
-            session()->forget('dev_view');
-        }
-    }
-
-    /** The interface being shown. For a Developer this is the role chosen under "Viewing as" (Admin / IT by default). */
+    /** The interface being shown. For a Developer this is the role chosen under "Viewing as". */
     public static function current(): string
     {
         $actual = self::actual();
-        if ($actual !== 'developer') {
+
+        if ($actual !== self::DEVELOPER) {
             return $actual;
         }
 
-        $view = session('dev_view', 'admin');
+        $view = session('view_as', 'operations');
 
-        return in_array($view, self::VIEWABLE, true) ? $view : 'admin';
+        return in_array($view, self::VIEWABLE, true) ? $view : 'operations';
     }
 
     public static function can(string $permission): bool
@@ -120,31 +111,3 @@ class Role
         return self::PORTAL[self::current()];
     }
 }
-    
-    public static function actual(): string
-    {
-    $role = Auth::user()?->role ?? '';
-
-    return ($role === self::DEVELOPER || array_key_exists($role, self::LABELS)) ? $role : 'atl_user';
-}
-
-    public static function isDeveloper(): bool
-    {
-        return self::actual() === self::DEVELOPER;
-    }
-
-    public static function current(): string
-    {
-        $actual = self::actual();
-
-        if ($actual === self::DEVELOPER) {
-            $view = session('view_as', '');
-
-            return array_key_exists($view, self::LABELS) ? $view : 'operations';
-        }
-
-        return $actual;
-    }
-        
-}
-

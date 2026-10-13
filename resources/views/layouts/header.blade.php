@@ -1,4 +1,5 @@
 @php
+    $live = auth()->check() && \App\Support\Role::can('users.manage');
     $role = \App\Support\Role::current();
     $portal = \App\Support\Role::portal();
     $notes = \App\Support\DemoData::notifications($role);
@@ -32,6 +33,10 @@
                 </div>
             </div>
 
+            @if ($live)
+                <x-live-bell />
+            @else
+
             <div class="relative" x-data="{ open: false }" @keydown.escape.window="open = false">
                 <button type="button" @click="open = !open" class="rounded-full p-2 hover:bg-white/10" aria-label="Account menu" :aria-expanded="open"><x-icon name="account" class="h-6 w-6" /></button>
                 <div x-show="open" x-cloak @click.outside="open = false" class="absolute right-0 z-50 mt-2 w-64 space-y-3 rounded-lg bg-white p-4 text-sm text-slate-800 shadow-xl">
@@ -56,6 +61,7 @@
                     </form>
                 </div>
             </div>
+            @endif
         </div>
     </div>
 </header>

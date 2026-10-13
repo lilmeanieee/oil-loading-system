@@ -10,7 +10,7 @@
 <section class="rounded-lg border border-slate-200 bg-white p-4">
     <h3 class="font-semibold text-slate-900">System Overview</h3>
     <div class="mt-2 divide-y divide-slate-100 text-sm">
-        <div class="flex items-center justify-between py-3"><span class="text-slate-700">Recent user activity</span><span class="text-slate-500">Last sign-in {{ \Carbon\Carbon::parse($lastLogins[0]['last_login'])->format('M d, g:i A') }}</span></div>
+        <div class="flex items-center justify-between py-3"><span class="text-slate-700">Recent user activity</span><span class="text-slate-500">Last sign-in {{ count($lastLogins) ? \Carbon\Carbon::parse($lastLogins[0]['last_login'])->format('M d, g:i A') : 'none yet' }}</span></div>
         <a href="{{ route('users.index') }}" class="flex items-center justify-between py-3 hover:text-emerald-800"><span class="text-slate-700">Pending user accounts</span><span class="font-medium text-orange-700">{{ count($registrations) }} waiting</span></a>
         <a href="{{ route('settings.index') }}" class="flex items-center justify-between py-3 hover:text-emerald-800"><span class="text-slate-700">Offline devices and sync issues</span><span class="font-medium text-slate-700">{{ collect($devices)->where('state', 'Conflict')->count() }} conflict, {{ collect($devices)->where('state', 'Offline')->count() }} offline</span></a>
     </div>

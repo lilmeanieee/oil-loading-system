@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\VerifyCodeController;
 use App\Http\Controllers\Auth\RegistrationController;
+use App\Http\Controllers\NotificationController;
 
 
 // The login page is the index. Signed-in users are sent to the dashboard automatically.
@@ -38,6 +39,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/pwa/urls', [PwaController::class, 'urls'])->name('pwa.urls');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/notifications/read', [NotificationController::class, 'readAll'])->name('notifications.read');
 
     // Authority to Load
     Route::get('/atl', [AtlController::class, 'index'])->name('atl.index');

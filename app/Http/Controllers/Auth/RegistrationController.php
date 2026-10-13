@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Throwable;
+use App\Notifications\NewAccountRequest;
+use App\Support\Role;
 
 /**
  * Request an account in three steps: details -> email code -> wait for an admin.
@@ -126,7 +128,9 @@ class RegistrationController extends Controller
 
         // Correct. The code can never be used again.
         Cache::forget(self::key($user->id));
-        $user->forceFill(['email_verified_at' => now()])->save();
+                $user->forceFill(['email_verified_at' => now()])->save();
+
+        $this->notifyAdmins($user);
 
         return redirect()->route('register.pending');
     }
@@ -182,6 +186,24 @@ class RegistrationController extends Controller
         ], now()->addMinutes(self::CODE_TTL_MINUTES));
 
         Mail::to($user->email)->send(new VerificationCodeMail($code, self::CODE_TTL_MINUTES, 'register'));
+    }
+
+        /** Tell every active Admin, live and in their bell. A failure here must never block the person's request. */
+    private function notifyAdmins(User $applicant): void
+    {
+        $label = Role::LABELS[$applicant->requested_role] ?? 'ATL User';
+
+        $admins = User::where('status', User::STATUS_ACTIVE)
+            ->whereIn('role', ['admin', 'developer'])
+            ->get();
+
+        foreach ($admins as $admin) {
+            try {
+                $admin->notify(new NewAccountRequest($applicant->name, $label));
+            } catch (Throwable $e) {
+                report($e); // for example, the Reverb server is not running
+            }
+        }
     }
 
     private function pendingUser(Request $request): ?User

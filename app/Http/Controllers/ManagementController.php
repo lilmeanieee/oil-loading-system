@@ -103,20 +103,93 @@ class ManagementController extends Controller
         }
     }
 
-    public function toggleUser(int $id)
+ public function toggleUser(Request $request, int $id): RedirectResponse
     {
         $this->allow('users.manage');
 
-        return back()->with('status', 'Account status changed. (Demo only.)');
+        $user = $this->findAccount($id);
+
+        if (! $user) {
+            return back()->withErrors(['request' => 'That account was not found.']);
+        }
+
+        if ($error = $this->cannotChange($user)) {
+            return back()->withErrors(['request' => $error]);
+        }
+
+        if ($user->id === $request->user()->id) {
+            return back()->withErrors(['request' => 'You cannot deactivate your own account.']);
+        }
+
+        $deactivate = $user->status === User::STATUS_ACTIVE;
+
+        if ($deactivate && $this->isLastAdmin($user)) {
+            return back()->withErrors(['request' => 'This is the last active Admin. Make another account an Admin first.']);
+        }
+
+        $user->forceFill(['status' => $deactivate ? User::STATUS_INACTIVE : User::STATUS_ACTIVE])->save();
+
+        return back()->with('status', $deactivate
+            ? "{$user->name} was deactivated. They are signed out on their next click and cannot sign in until you activate the account again."
+            : "{$user->name} was activated and can sign in again.");
     }
 
-    public function changeRole(Request $request, int $id)
+    public function changeRole(Request $request, int $id): RedirectResponse
     {
         $this->allow('users.manage');
-        $request->validate(['role' => 'required|in:atl_user,operations,admin,owner']);
+        $data = $request->validate(['role' => 'required|in:atl_user,operations,admin,owner']);
 
-        return back()->with('status', 'Role changed. (Demo only.)');
+        $user = $this->findAccount($id);
+
+        if (! $user) {
+            return back()->withErrors(['request' => 'That account was not found.']);
+        }
+
+        if ($error = $this->cannotChange($user)) {
+            return back()->withErrors(['request' => $error]);
+        }
+
+        if ($user->id === $request->user()->id) {
+            return back()->withErrors(['request' => 'You cannot change your own role.']);
+        }
+
+        if ($user->role === $data['role']) {
+            return back()->with('status', "{$user->name} already has the ".Role::LABELS[$data['role']].' role.');
+        }
+
+        if ($data['role'] !== 'admin' && $this->isLastAdmin($user)) {
+            return back()->withErrors(['request' => 'This is the last active Admin. Make another account an Admin first.']);
+        }
+
+        $user->forceFill(['role' => $data['role']])->save();
+
+        return back()->with('status', "{$user->name} is now ".Role::LABELS[$data['role']].'. It applies on their next page load.');
     }
+
+    private function findAccount(int $id): ?User
+    {
+        return User::whereIn('status', [User::STATUS_ACTIVE, User::STATUS_INACTIVE])->find($id);
+    }
+
+    /** Only a Developer may touch a Developer account. */
+    private function cannotChange(User $user): ?string
+    {
+        return ($user->role === 'developer' && ! Role::isDeveloper())
+            ? 'Only a Developer can change a Developer account.'
+            : null;
+    }
+
+     /** True when this is the only active Admin/Developer, so removing them would lock everyone out of admin. */
+    private function isLastAdmin(User $user): bool
+    {
+        return $user->status === User::STATUS_ACTIVE
+            && in_array($user->role, ['admin', 'developer'], true)
+            && ! User::where('status', User::STATUS_ACTIVE)
+                ->whereIn('role', ['admin', 'developer'])
+                ->where('id', '!=', $user->id)
+                ->exists();
+    }
+
 
     public function products()
     {

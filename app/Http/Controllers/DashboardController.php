@@ -36,7 +36,7 @@ class DashboardController extends Controller
 
     private function adminData($atls): array
     {
-        $users = collect(DemoData::users());
+        $users = collect(User::directory());
         $trucks = collect(DemoData::trucks());
 
         return [
@@ -52,7 +52,7 @@ class DashboardController extends Controller
             'recentAtls'    => $atls->sortByDesc('id')->take(4)->values()->all(),
             'alerts'        => $trucks->filter(fn ($t) => collect($t['cert_list'])->contains(fn ($c) => $c['status'] !== 'Valid'))->values()->all(),
             'driverAlerts'  => collect(DemoData::drivers())->filter(fn ($d) => DemoData::certStatus($d['license_expiry']) !== 'Valid')->values()->all(),
-            'lastLogins'    => $users->sortByDesc('last_login')->take(4)->values()->all(),
+            'lastLogins'    => $users->whereNotNull('last_login')->sortByDesc('last_login')->take(4)->values()->all(),
         ];
     }
 

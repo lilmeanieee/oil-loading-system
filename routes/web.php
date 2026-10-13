@@ -9,7 +9,7 @@ use App\Http\Controllers\ManagementController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PwaController;
 use App\Http\Controllers\ReleaseController;
-use App\Http\Controllers\TruckMasterController;
+use App\Http\Controllers\HaulerManagementController;
 use App\Http\Controllers\Auth\VerifyCodeController;
 use App\Support\Role;
 use Illuminate\Http\Request;
@@ -59,9 +59,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/releases', [ReleaseController::class, 'store'])->name('releases.store');
 
     // Master data
-    Route::get('/trucks', [TruckMasterController::class, 'index'])->name('trucks.index');
-    Route::get('/drivers', [ManagementController::class, 'drivers'])->name('drivers.index');
-    Route::get('/haulers', [ManagementController::class, 'haulers'])->name('haulers.index');
+    Route::get('/hauler-management', [HaulerManagementController::class, 'index'])->name('haulers.index');
+    // Old URLs still work and open the matching tab.
+    Route::redirect('/trucks', '/hauler-management?tab=trucks')->name('trucks.index');
+    Route::redirect('/drivers', '/hauler-management?tab=drivers')->name('drivers.index');
+    Route::redirect('/haulers', '/hauler-management');
     Route::get('/products', [ManagementController::class, 'products'])->name('products.index');
 
     // Admin / IT
@@ -79,9 +81,7 @@ Route::middleware('auth')->group(function () {
 
     // DEMO ONLY: preview the pages as each role. Remove when real roles exist.
     Route::post('/demo/role', function (Request $request) {
-        if (array_key_exists($request->input('role'), Role::LABELS)) {
-            session(['demo_role' => $request->input('role')]);
-        }
+        Role::setView((string) $request->input('role'));
 
         return redirect()->route('dashboard');
     })->name('demo.role');

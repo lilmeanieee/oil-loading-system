@@ -26,50 +26,53 @@ class DashboardController extends Controller
                 ],
                 'recent' => $mine->sortByDesc('id')->take(4)->values()->all(),
             ];
-        } elseif ($role === 'admin') {
-            $users = collect(DemoData::users());
-            $trucks = collect(DemoData::trucks());
-            $data += [
-                'stats' => [
-                    'Total users'  => $users->count(),
-                    'Active users' => $users->where('status', 'Active')->count(),
-                    'Total ATLs'   => $atls->count(),
-                    'Sync issues'  => collect(DemoData::devices())->where('state', 'Conflict')->count(),
-                ],
-                'registrations' => DemoData::registrations(),
-                'devices'       => DemoData::devices(),
-                'audit'         => array_slice(DemoData::audit(), 0, 4),
-                'recentAtls'    => $atls->sortByDesc('id')->take(4)->values()->all(),
-                'alerts'        => $trucks->filter(fn ($t) => collect($t['cert_list'])->contains(fn ($c) => $c['status'] !== 'Valid'))->values()->all(),
-                'driverAlerts'  => collect(DemoData::drivers())->filter(fn ($d) => DemoData::certStatus($d['license_expiry']) !== 'Valid')->values()->all(),
-                'lastLogins'    => $users->sortByDesc('last_login')->take(4)->values()->all(),
-            ];
-        
         } else {
-            $cards = [
-                'operations' => ['Submitted', 'Approved', 'Loading', 'Completed'],
-                'owner' => ['Submitted', 'Approved', 'Loading', 'Completed'],
-                'developer' => ['Draft', 'Submitted', 'Approved', 'Completed'],
-            ][$role] ?? ['Submitted', 'Approved', 'Loading', 'Completed'];
-
-            $activity = $atls
-                ->flatMap(fn ($a) => collect($a['timeline'])->map(
-                    fn ($t) => $t + ['atl' => $a['atl_no'], 'atl_id' => $a['id']]
-                ))
-                ->sortByDesc('at')
-                ->take(6)
-                ->values()
-                ->all();
-
-            $data += [
-                'cards' => $cards,
-                'counts' => $atls->countBy('status'),
-                'atls' => $atls->sortByDesc('id')->take(5)->values()->all(),
-                'activity' => $activity,
-            ];
+            $data += $role === 'admin' ? $this->adminData($atls) : $this->staffData($atls);
         }
 
-
         return view('dashboard', $data);
+    }
+
+    private function adminData($atls): array
+    {
+        $users = collect(DemoData::users());
+        $trucks = collect(DemoData::trucks());
+
+        return [
+            'stats' => [
+                'Total users'  => $users->count(),
+                'Active users' => $users->where('status', 'Active')->count(),
+                'Total ATLs'   => $atls->count(),
+                'Sync issues'  => collect(DemoData::devices())->where('state', 'Conflict')->count(),
+            ],
+            'registrations' => DemoData::registrations(),
+            'devices'       => DemoData::devices(),
+            'audit'         => array_slice(DemoData::audit(), 0, 4),
+            'recentAtls'    => $atls->sortByDesc('id')->take(4)->values()->all(),
+            'alerts'        => $trucks->filter(fn ($t) => collect($t['cert_list'])->contains(fn ($c) => $c['status'] !== 'Valid'))->values()->all(),
+            'driverAlerts'  => collect(DemoData::drivers())->filter(fn ($d) => DemoData::certStatus($d['license_expiry']) !== 'Valid')->values()->all(),
+            'lastLogins'    => $users->sortByDesc('last_login')->take(4)->values()->all(),
+        ];
+    }
+
+    private function staffData($atls): array
+    {
+        $cards = ['Submitted', 'Approved', 'Loading', 'Completed'];
+
+        $activity = $atls
+            ->flatMap(fn ($a) => collect($a['timeline'])->map(
+                fn ($t) => $t + ['atl' => $a['atl_no'], 'atl_id' => $a['id']]
+            ))
+            ->sortByDesc('at')
+            ->take(6)
+            ->values()
+            ->all();
+
+        return [
+            'cards'    => $cards,
+            'counts'   => $atls->countBy('status'),
+            'atls'     => $atls->sortByDesc('id')->take(5)->values()->all(),
+            'activity' => $activity,
+        ];
     }
 }

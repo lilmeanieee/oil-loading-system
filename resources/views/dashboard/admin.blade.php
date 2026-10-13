@@ -42,7 +42,7 @@
     </section>
 
     <section class="rounded-lg border border-slate-200 bg-white p-4">
-        <div class="flex items-center justify-between"><h3 class="font-semibold text-slate-900">Data alerts</h3><a href="{{ route('trucks.index') }}" class="text-sm text-emerald-800 hover:underline">Truck management</a></div>
+        <div class="flex items-center justify-between"><h3 class="font-semibold text-slate-900">Data alerts</h3><a href="{{ route('haulers.index', ['tab' => 'trucks']) }}" class="text-sm text-emerald-800 hover:underline">Hauler management</a></div>
         <ul class="mt-3 space-y-2 text-sm">
             @forelse ($alerts as $t)
                 @foreach (array_filter($t['cert_list'], fn ($c) => $c['status'] !== 'Valid') as $c)

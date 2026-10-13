@@ -1,11 +1,11 @@
-@php $hints = ['Submitted' => 'Waiting for Operations', 'Approved' => 'Ready for loading and documents', 'Loading' => 'At the depot', 'Completed' => 'Finished']; @endphp
+@php $hints = ['Draft' => 'Not yet submitted', 'Submitted' => 'Waiting for Operations', 'Approved' => 'Ready for loading and documents', 'Loading' => 'At the depot', 'Completed' => 'Finished']; @endphp
 
 <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
     @foreach ($cards as $s)
         <a href="{{ route('atl.index', ['status' => $s]) }}" class="rounded-lg border border-slate-200 bg-white p-4 hover:border-emerald-700">
             <div class="text-2xl font-semibold text-slate-900">{{ $counts[$s] ?? 0 }}</div>
             <div class="text-sm font-medium text-slate-700">{{ $s }}</div>
-            <div class="text-xs text-slate-500">{{ $hints[$s] }}</div>
+            <div class="text-xs text-slate-500">{{ $hints[$s] ?? '' }}</div>
         </a>
     @endforeach
 </div>

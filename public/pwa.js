@@ -1,4 +1,4 @@
-/* Offline support for the Oil Loading System.
+/* Offline support for PA Fuel 118.
    1. Registers the service worker and saves the pages this user can open.
    2. Shows an offline / waiting-to-sync indicator.
    3. Forms marked data-offline="queue" are saved on this device when there is no connection

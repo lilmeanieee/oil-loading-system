@@ -54,20 +54,6 @@ class ManagementController extends Controller
         return back()->with('status', 'Role changed. (Demo only.)');
     }
 
-    public function drivers()
-    {
-        $this->allow('drivers.view');
-
-        return view('admin.drivers', ['drivers' => DemoData::drivers()]);
-    }
-
-    public function haulers()
-    {
-        $this->allow('haulers.view');
-
-        return view('admin.haulers', ['haulers' => DemoData::haulers()]);
-    }
-
     public function products()
     {
         $this->allow('products.manage');

@@ -5,6 +5,7 @@
             'operations' => ['Operations overview', 'ATLs, approvals and loading'],
             'admin'      => ['Admin Dashboard', 'System overview and management'],
             'owner'      => ['Management overview', 'Records and reports (view only)'],
+            'developer'  => ['Developer Dashboard', 'All admin and operations views in one place'],
         ];
         [$pageTitle, $pageSub] = $titles[$role];
     @endphp

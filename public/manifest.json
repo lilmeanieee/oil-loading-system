@@ -1,6 +1,6 @@
 {
-  "name": "Oil Loading System",
-  "short_name": "Oil Loading",
+  "name": "PA Fuel 118",
+  "short_name": "PA Fuel 118",
   "description": "Authority to Load, loading tickets and documents. Keeps working offline.",
   "start_url": "/dashboard",
   "scope": "/",

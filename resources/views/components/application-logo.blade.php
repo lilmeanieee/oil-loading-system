@@ -1,6 +1,6 @@
 
 <img
     src="{{ asset('images/logo-GreenOil.webp') }}"
-    alt="GreenOil Logo"
+    alt="PA Fuel 118 Logo"
     {{ $attributes }}
 >

@@ -1,6 +1,7 @@
 <x-app-layout>
     @php
         $roles = \App\Support\Role::LABELS;
+        $assignable = collect($roles)->except(\App\Support\Role::isDeveloper() ? [] : ['developer'])->all();
         $in = 'rounded border-slate-300 text-sm focus:border-emerald-700 focus:ring-emerald-700';
         $btn = 'rounded-lg px-3 py-1.5 text-sm font-medium';
         $tab = 'border-b-2 px-4 py-2 text-sm font-medium';
@@ -43,7 +44,7 @@
                                     <form x-show="mode === 'approve'" method="POST" action="{{ route('users.approve', $r['id']) }}" data-offline="online" class="flex flex-wrap items-end gap-3">
                                         @csrf
                                         <div><label class="mb-1 block text-sm font-medium text-slate-700" for="role_{{ $r['id'] }}">Assign role</label>
-                                            <select id="role_{{ $r['id'] }}" name="role" class="{{ $in }}">@foreach ($roles as $key => $label)<option value="{{ $key }}" @selected($key === $r['requested'])>{{ $label }}</option>@endforeach</select></div>
+                                            <select id="role_{{ $r['id'] }}" name="role" class="{{ $in }}">@foreach ($assignable as $key => $label)<option value="{{ $key }}" @selected($key === $r['requested'])>{{ $label }}</option>@endforeach</select></div>
                                         <button type="submit" class="{{ $btn }} bg-[#1c3d34] text-white hover:bg-[#2a5a4c]">Approve and activate</button>
                                     </form>
                                     <form x-show="mode === 'reject'" method="POST" action="{{ route('users.reject', $r['id']) }}" data-offline="online" class="space-y-2">
@@ -85,7 +86,7 @@
                                     <form method="POST" action="{{ route('users.role', $u['id']) }}" data-offline="online" class="flex flex-wrap items-end gap-3">
                                         @csrf
                                         <div><label class="mb-1 block text-sm font-medium text-slate-700" for="newrole_{{ $u['id'] }}">Role for {{ $u['name'] }}</label>
-                                            <select id="newrole_{{ $u['id'] }}" name="role" class="{{ $in }}">@foreach ($roles as $key => $label)<option value="{{ $key }}" @selected($key === $u['role'])>{{ $label }}</option>@endforeach</select></div>
+                                            <select id="newrole_{{ $u['id'] }}" name="role" class="{{ $in }}">@foreach ($assignable as $key => $label)<option value="{{ $key }}" @selected($key === $u['role'])>{{ $label }}</option>@endforeach</select></div>
                                         <button type="submit" class="{{ $btn }} bg-[#1c3d34] text-white hover:bg-[#2a5a4c]">Save role</button>
                                     </form>
                                 </td>

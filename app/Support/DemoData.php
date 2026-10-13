@@ -19,10 +19,9 @@ class DemoData
     public static function products(): array
     {
         return [
-            ['atl' => 'EXTREME 95', 'ticket' => 'R95', 'doc' => 'MOGAS R95', 'tax_note' => ''],
-            ['atl' => 'EXTREME U', 'ticket' => 'R91', 'doc' => 'MOGAS R91', 'tax_note' => ''],
-            ['atl' => 'EXCEED DIESEL', 'ticket' => 'ADO', 'doc' => 'DIESEL', 'tax_note' => 'CME 3%'],
-            ['atl' => 'ETHANOL', 'ticket' => 'ETH', 'doc' => 'ETHANOL', 'tax_note' => ''],
+            ['atl' => 'R95', 'ticket' => 'R95', 'doc' => 'MOGAS R95', 'tax_note' => ''],
+            ['atl' => 'R91', 'ticket' => 'R91', 'doc' => 'MOGAS R91', 'tax_note' => ''],
+            ['atl' => 'DIESEL', 'ticket' => 'ADO', 'doc' => 'DIESEL', 'tax_note' => 'CME 3%'],
         ];
     }
 
@@ -102,15 +101,15 @@ class DemoData
                 'id' => 524, 'so_no' => '2026-10-0655', 'control_no' => '2026-423', 'date' => '2026-10-08',
                 'authorized' => 'Romel Monin', 'hauler' => 'South Oil Corporation', 'plate' => 'LAN-1731', 'capacity' => '30KL',
                 'destination' => 'Surallah', 'creator' => 'Ma\'am Jhona', 'status' => 'Draft',
-                'items' => [['product' => 'EXTREME U', 'volume' => 15000]], 'plan' => [],
+                'items' => [['product' => 'R91', 'volume' => 15000]], 'plan' => [],
                 'timeline' => [['label' => 'Draft saved', 'by' => 'Ma\'am Jhona', 'at' => '2026-10-08 09:10', 'note' => '']],
             ],
             $b + [
                 'id' => 523, 'so_no' => '2026-10-0652', 'control_no' => '2026-422', 'date' => '2026-10-08',
                 'authorized' => 'Romel Monin', 'hauler' => 'South Oil Corporation', 'plate' => 'LAN-1731', 'capacity' => '30KL',
                 'destination' => 'Tupi', 'creator' => 'Ma\'am Jhona', 'status' => 'Submitted',
-                'items' => [['product' => 'EXTREME 95', 'volume' => 15000], ['product' => 'EXCEED DIESEL', 'volume' => 15000]],
-                'plan' => self::plan([[5000, 'EXCEED DIESEL'], [3000, 'EXCEED DIESEL'], [3000, 'EXTREME 95'], [3000, 'EXCEED DIESEL'], [6000, 'EXTREME 95'], [6000, 'EXTREME 95'], [4000, 'EXCEED DIESEL']]),
+                'items' => [['product' => 'R95', 'volume' => 15000], ['product' => 'DIESEL', 'volume' => 15000]],
+                'plan' => self::plan([[5000, 'DIESEL'], [3000, 'DIESEL'], [3000, 'R95'], [3000, 'DIESEL'], [6000, 'R95'], [6000, 'R95'], [4000, 'DIESEL']]),
                 'timeline' => [
                     ['label' => 'Draft saved', 'by' => 'Ma\'am Jhona', 'at' => '2026-10-08 08:40', 'note' => ''],
                     ['label' => 'Submitted for approval', 'by' => 'Ma\'am Jhona', 'at' => '2026-10-08 08:55', 'note' => ''],
@@ -121,8 +120,8 @@ class DemoData
                 'authorized' => 'Melvin Pacheco', 'hauler' => 'Toto Alba Bulilit Gasoline Station', 'plate' => 'LAJ 3616', 'capacity' => '30KL',
                 'destination' => 'Bulilit', 'creator' => 'Ma\'am Jhona', 'status' => 'Declined',
                 'decline_reason' => 'Compartment 3 is over capacity. Correct the allocation and resubmit.',
-                'items' => [['product' => 'EXTREME 95', 'volume' => 20000], ['product' => 'EXTREME U', 'volume' => 10000]],
-                'plan' => self::plan([[6000, 'EXTREME 95'], [6000, 'EXTREME 95'], [5000, 'EXTREME 95'], [3000, 'EXTREME 95'], [4000, 'EXTREME U'], [2000, 'EXTREME U'], [2000, 'EXTREME U'], [2000, 'EXTREME U']]),
+                'items' => [['product' => 'R95', 'volume' => 20000], ['product' => 'R91', 'volume' => 10000]],
+                'plan' => self::plan([[6000, 'R95'], [6000, 'R95'], [5000, 'R95'], [3000, 'R95'], [4000, 'R91'], [2000, 'R91'], [2000, 'R91'], [2000, 'R91']]),
                 'timeline' => [
                     ['label' => 'Submitted for approval', 'by' => 'Ma\'am Jhona', 'at' => '2026-10-07 14:05', 'note' => ''],
                     ['label' => 'Declined', 'by' => 'Ma\'am Joy', 'at' => '2026-10-07 14:30', 'note' => 'Compartment 3 is over capacity. Correct the allocation and resubmit.'],
@@ -132,8 +131,8 @@ class DemoData
                 'id' => 521, 'so_no' => '2026-10-0646', 'control_no' => '2026-420', 'date' => '2026-10-01',
                 'authorized' => 'Melvin Pacheco', 'hauler' => 'Toto Alba Bulilit Gasoline Station', 'plate' => 'LAJ 3616', 'capacity' => '30KL',
                 'destination' => 'Bulilit', 'creator' => 'Ma\'am Jhona', 'status' => 'Loading',
-                'items' => [['product' => 'EXTREME 95', 'volume' => 18000], ['product' => 'EXTREME U', 'volume' => 6000], ['product' => 'EXCEED DIESEL', 'volume' => 6000]],
-                'plan' => self::plan([[6000, 'EXTREME 95'], [6000, 'EXTREME 95'], [4000, 'EXTREME 95'], [2000, 'EXTREME 95'], [4000, 'EXTREME U'], [2000, 'EXTREME U'], [2000, 'EXCEED DIESEL'], [4000, 'EXCEED DIESEL']]),
+                'items' => [['product' => 'R95', 'volume' => 18000], ['product' => 'R91', 'volume' => 6000], ['product' => 'DIESEL', 'volume' => 6000]],
+                'plan' => self::plan([[6000, 'R95'], [6000, 'R95'], [4000, 'R95'], [2000, 'R95'], [4000, 'R91'], [2000, 'R91'], [2000, 'DIESEL'], [4000, 'DIESEL']]),
                 'docs_issued' => true,
                 'timeline' => [
                     ['label' => 'Submitted for approval', 'by' => 'Ma\'am Jhona', 'at' => '2026-10-01 07:50', 'note' => ''],
@@ -146,8 +145,8 @@ class DemoData
                 'id' => 520, 'so_no' => '2026-09-0605', 'control_no' => '2026-419', 'date' => '2026-09-30',
                 'authorized' => 'Romel Monin', 'hauler' => 'South Oil Corporation', 'plate' => 'LAN-1731', 'capacity' => '30KL',
                 'total_seals' => '15 PCS', 'destination' => 'Surallah', 'creator' => 'Ma\'am Jhona', 'status' => 'Approved',
-                'items' => [['product' => 'EXTREME 95', 'volume' => 12000], ['product' => 'EXTREME U', 'volume' => 10000], ['product' => 'EXCEED DIESEL', 'volume' => 8000]],
-                'plan' => self::plan([[5000, 'EXCEED DIESEL'], [3000, 'EXCEED DIESEL'], [3000, 'EXTREME U'], [3000, 'EXTREME U'], [6000, 'EXTREME 95'], [6000, 'EXTREME 95'], [4000, 'EXTREME U']]),
+                'items' => [['product' => 'R95', 'volume' => 12000], ['product' => 'R91', 'volume' => 10000], ['product' => 'DIESEL', 'volume' => 8000]],
+                'plan' => self::plan([[5000, 'DIESEL'], [3000, 'DIESEL'], [3000, 'R91'], [3000, 'R91'], [6000, 'R95'], [6000, 'R95'], [4000, 'R91']]),
                 'timeline' => [
                     ['label' => 'Submitted for approval', 'by' => 'Ma\'am Jhona', 'at' => '2026-09-30 10:00', 'note' => ''],
                     ['label' => 'Approved', 'by' => 'Ma\'am Joy', 'at' => '2026-09-30 10:20', 'note' => ''],
@@ -157,7 +156,7 @@ class DemoData
                 'id' => 519, 'so_no' => '2026-09-0590', 'control_no' => '2026-418', 'date' => '2026-09-29',
                 'authorized' => 'Juan Dela Cruz', 'hauler' => 'Sample Hauling Inc.', 'plate' => 'GAB 4521', 'capacity' => '20KL',
                 'destination' => 'Koronadal', 'creator' => 'Ma\'am Jhona', 'status' => 'Completed',
-                'items' => [['product' => 'EXCEED DIESEL', 'volume' => 20000]], 'plan' => [], 'docs_issued' => true, 'actual' => 20000,
+                'items' => [['product' => 'DIESEL', 'volume' => 20000]], 'plan' => [], 'docs_issued' => true, 'actual' => 20000,
                 'timeline' => [
                     ['label' => 'Approved', 'by' => 'Ma\'am Joy', 'at' => '2026-09-29 09:00', 'note' => ''],
                     ['label' => 'Documents issued', 'by' => 'Ma\'am Joy', 'at' => '2026-09-29 09:20', 'note' => ''],
@@ -168,7 +167,7 @@ class DemoData
                 'id' => 518, 'so_no' => '2026-09-0577', 'control_no' => '2026-417', 'date' => '2026-09-29',
                 'authorized' => 'Romel Monin', 'hauler' => 'South Oil Corporation', 'plate' => 'LAN-1731', 'capacity' => '30KL',
                 'destination' => 'Tupi', 'creator' => 'Ma\'am Jhona', 'status' => 'Completed',
-                'items' => [['product' => 'EXTREME U', 'volume' => 30000]], 'plan' => [], 'docs_issued' => true, 'actual' => 30000,
+                'items' => [['product' => 'R91', 'volume' => 30000]], 'plan' => [], 'docs_issued' => true, 'actual' => 30000,
                 'timeline' => [
                     ['label' => 'Approved', 'by' => 'Ma\'am Joy', 'at' => '2026-09-29 07:30', 'note' => ''],
                     ['label' => 'Completed', 'by' => 'Ma\'am Joy', 'at' => '2026-09-29 10:05', 'note' => 'Actual 30,000 L confirmed'],

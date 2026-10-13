@@ -27,17 +27,17 @@ class AtlController extends Controller
 
     public function mine(Request $request)
     {
-        return $this->lists('My ATL Records', $request->query('status', 'All'), 'mine');
+        return $this->lists('ATL Records', $request->query('status', 'All'), 'mine');
     }
 
     public function drafts()
     {
-        return $this->lists('Drafts', 'Draft', 'drafts');
+        return $this->lists('ATL Records', 'Draft', 'drafts');
     }
 
     public function returned()
     {
-        return $this->lists('Returned ATLs', 'Declined', 'returned');
+        return $this->lists('ATL Records', 'Declined', 'returned');
     }
 
     public function approvals()

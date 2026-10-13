@@ -1,15 +1,9 @@
-<x-app-layout>
-    @php
+@php
         $canManage = \App\Support\Role::can('drivers.manage');
         $in = 'w-full rounded border-slate-300 text-sm focus:border-emerald-700 focus:ring-emerald-700';
         $lb = 'mb-1 block text-sm font-medium text-slate-700';
         $plates = collect(\App\Support\DemoData::trucks())->pluck('plate');
     @endphp
-
-    <x-slot name="header">
-        <h2 class="text-xl font-semibold text-slate-900">Driver Management</h2>
-        <p class="mt-1 text-sm text-slate-600">Driver profiles, default and substitute assignments, and eligibility</p>
-    </x-slot>
 
     <div class="py-6" x-data="{ adding: false }">
         <div class="mx-auto max-w-6xl space-y-5 px-4 sm:px-6 lg:px-8">
@@ -52,4 +46,3 @@
             </div>
         </div>
     </div>
-</x-app-layout>

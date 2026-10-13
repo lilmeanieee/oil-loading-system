@@ -9,8 +9,8 @@
 
     <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4" aria-label="Main menu">
         @foreach (\App\Support\Role::menu() as [$label, $route, $pattern, $icon])
-            <a href="{{ route($route) }}" @if (request()->routeIs($pattern)) aria-current="page" @endif
-               class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm {{ request()->routeIs($pattern) ? 'bg-[#d9eadf] font-medium text-[#1c3d34]' : 'text-slate-700 hover:bg-[#e2efe8]' }}">
+            <a href="{{ route($route) }}" @if (request()->routeIs(...explode('|', $pattern))) aria-current="page" @endif
+               class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm {{ request()->routeIs(...explode('|', $pattern)) ? 'bg-[#d9eadf] font-medium text-[#1c3d34]' : 'text-slate-700 hover:bg-[#e2efe8]' }}">
                 <x-icon :name="$icon" class="h-5 w-5 shrink-0" />
                 <span>{{ $label }}</span>
             </a>

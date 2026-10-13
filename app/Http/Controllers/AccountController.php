@@ -8,6 +8,6 @@ class AccountController extends Controller
 {
     public function show()
     {
-        return view('account.show', ['role' => Role::LABELS[Role::current()]]);
+        return view('account.show', ['role' => Role::LABELS[Role::actual()]]);
     }
 }

@@ -1,0 +1,1 @@
+<div x-show="msg" x-cloak x-transition.opacity class="fixed bottom-5 right-5 z-50 max-w-sm rounded-lg bg-[#1c3d34] px-4 py-3 text-sm text-white shadow-lg" role="status" aria-live="polite" x-text="msg"></div>

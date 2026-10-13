@@ -17,5 +17,7 @@
         @endforeach
     </nav>
 
-    
+    <div class="px-4 pb-4">
+        <button type="button" id="pwa-install" hidden class="w-full rounded-lg border border-[#1c3d34] px-3 py-2 text-sm text-[#1c3d34] hover:bg-[#e2efe8]">Install app on this device</button>
+    </div>
 </aside>

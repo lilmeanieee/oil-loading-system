@@ -5,7 +5,6 @@
             'operations' => ['Operations overview', 'ATLs, approvals and loading'],
             'admin'      => ['Admin Dashboard', 'System overview and management'],
             'owner'      => ['Management overview', 'Records and reports (view only)'],
-            'developer'  => ['Developer Dashboard', 'All admin and operations views in one place'],
         ];
         [$pageTitle, $pageSub] = $titles[$role];
     @endphp
@@ -21,7 +20,7 @@
                 <div class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{{ session('status') }}</div>
             @endif
 
-            @include('dashboard.'.(in_array($role, ['operations', 'owner']) ? 'staff' : $role))
+            @include('dashboard.'.($role === 'owner' ? 'staff' : $role))
 
             <p class="text-xs text-slate-500">Sample data. The figures are not live system data.</p>
         </div>

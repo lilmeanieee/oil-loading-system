@@ -10,11 +10,11 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PwaController;
 use App\Http\Controllers\ReleaseController;
 use App\Http\Controllers\HaulerManagementController;
+use App\Http\Controllers\OperationsController;
 use App\Http\Controllers\Auth\VerifyCodeController;
 use App\Support\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
 
 // The login page is the index. Signed-in users are sent to the dashboard automatically.
 Route::redirect('/', '/login');
@@ -47,7 +47,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/atl/{id}', [AtlController::class, 'show'])->whereNumber('id')->name('atl.show');
     Route::post('/atl/{id}/approve', [AtlController::class, 'approve'])->whereNumber('id')->name('atl.approve');
     Route::post('/atl/{id}/decline', [AtlController::class, 'decline'])->whereNumber('id')->name('atl.decline');
-    Route::get('/approvals', [AtlController::class, 'approvals'])->name('approvals.index');
+    Route::get('/approvals', [OperationsController::class, 'approvals'])->name('approvals.index');
 
     // Loading
     Route::get('/loading', [LoadingTicketController::class, 'index'])->name('loading.index');
@@ -80,15 +80,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings', [ManagementController::class, 'settings'])->name('settings.index');
     Route::get('/account', [AccountController::class, 'show'])->name('account.show');
 
-    Route::post('/developer/view-as', function (Request $request) {
-    abort_unless(Role::isDeveloper(), 403);
+    // DEMO ONLY: preview the pages as each role. Remove when real roles exist.
+    $switchView = function (Request $request) {
+        Role::setView((string) $request->input('role'));
 
-    if (array_key_exists($request->input('role'), Role::LABELS)) {
-        session(['view_as' => $request->input('role')]);
-    }
-
-    return redirect()->route('dashboard');
-    })->name('developer.view-as');
+        return redirect()->route('dashboard');
+    };
+    Route::post('/demo/role', $switchView)->name('demo.role');
+    // Same action under a second name, in case an older header still calls it.
+    Route::post('/developer/view-as', $switchView)->name('developer.view-as');
 
     // Profile pages that come with Breeze
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

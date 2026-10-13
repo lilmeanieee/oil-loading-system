@@ -30,6 +30,10 @@ class DashboardController extends Controller
             $data += $role === 'admin' ? $this->adminData($atls) : $this->staffData($atls);
         }
 
+        if ($role === 'operations') {
+            $data['opsSeed'] = \App\Support\OpsData::seed(optional(auth()->user())->name);
+        }
+
         return view('dashboard', $data);
     }
 

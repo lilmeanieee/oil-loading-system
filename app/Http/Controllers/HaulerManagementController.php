@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Support\DemoData;
+use App\Support\OpsData;
 use App\Support\Role;
-use Illuminate\Http\Request;
 
-/** One Hauler Management page with three tabs: Haulers, Trucks, Drivers. */
+/** One Hauler Management page (Haulers, Trucks, Drivers tabs) shared by Admin and Operations. */
 class HaulerManagementController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
         $tabs = array_values(array_filter(
             ['haulers', 'trucks', 'drivers'],
@@ -17,14 +16,10 @@ class HaulerManagementController extends Controller
         ));
         abort_if($tabs === [], 403);
 
-        $tab = $request->query('tab');
-
         return view('hauler-management.index', [
-            'tabs'    => $tabs,
-            'tab'     => in_array($tab, $tabs, true) ? $tab : $tabs[0],
-            'haulers' => DemoData::haulers(),
-            'trucks'  => DemoData::trucks(),
-            'drivers' => DemoData::drivers(),
+            'tabs'      => $tabs,
+            'canManage' => Role::can('trucks.manage') || Role::can('drivers.manage') || Role::can('haulers.manage'),
+            'opsSeed'   => OpsData::seed(optional(auth()->user())->name),
         ]);
     }
 }

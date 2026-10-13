@@ -39,9 +39,9 @@
                     <a href="{{ route('account.show') }}" class="block text-[#1c3d34] hover:underline">My profile</a>
                     @if (\App\Support\Role::canSwitch())
                         {{-- Developer (and demo mode): switch which role's interface is shown --}}
-                        <form method="POST" action="{{ route('developer.view-as') }}" data-offline="online" data-pwa-clear>
+                        <form method="POST" action="{{ route('demo.role') }}" data-offline="online" data-pwa-clear>
                             @csrf
-                            <label for="demo_role" class="mb-1 block text-xs text-slate-500">Viewing as{{ \App\Support\Role::isDeveloper() ? '' : '' }}</label>
+                            <label for="demo_role" class="mb-1 block text-xs text-slate-500">Viewing as{{ \App\Support\Role::isDeveloper() ? '' : ' (demo)' }}</label>
                             <select id="demo_role" name="role" onchange="this.form.requestSubmit()" class="w-full rounded border-slate-300 py-1.5 text-sm focus:border-emerald-700 focus:ring-emerald-700">
                                 @foreach (\App\Support\Role::LABELS as $key => $label)
                                     @continue($key === 'developer' && \App\Support\Role::isDeveloper())

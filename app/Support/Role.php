@@ -1,11 +1,15 @@
 <?php
 
 namespace App\Support;
-use Illuminate\Support\Facades\Auth;
 
+/**
+ * DEMO ONLY. Lets the front-end preview each role's menu, pages and buttons.
+ * A Developer always sees exactly one role's interface at a time, chosen with "Viewing as".
+ * The backend developer replaces this with real roles and Laravel policies or gates.
+ * If the users table gets a "role" column, current() already reads it.
+ */
 class Role
 {
-    public const DEVELOPER = 'developer';
     public const LABELS = [
         'atl_user'   => 'ATL User',
         'operations' => 'Operations',
@@ -38,10 +42,9 @@ class Role
         ],
         'operations' => [
             ['Dashboard', 'dashboard', 'dashboard', 'dashboard'],
-            ['Approvals', 'approvals.index', 'approvals.*', 'check'],
-            ['ATL Records', 'atl.index', 'atl.index', 'records'],
+            ['ATL Approvals', 'approvals.index', 'approvals.*', 'check'],
+            ['Documents & Release', 'documents.index', 'documents.*', 'document'],
             ['Hauler Management', 'haulers.index', 'haulers.*|trucks.*|drivers.*', 'hauler'],
-            ['Reports', 'reports.index', 'reports.*', 'chart'],
         ],
         'admin' => [
             ['Dashboard', 'dashboard', 'dashboard', 'dashboard'],
@@ -63,37 +66,46 @@ class Role
     /** Interfaces a Developer can switch between. */
     public const VIEWABLE = ['atl_user', 'operations', 'admin', 'owner'];
 
-    /** The signed-in person's own role (from users.role). Falls back to the lowest-privilege role. */
+    /** The signed-in person's own role. */
     public static function actual(): string
     {
-        $role = Auth::user()?->role ?? '';
+        $role = optional(auth()->user())->role ?? session('demo_role', 'operations');
 
-        return ($role === self::DEVELOPER || array_key_exists($role, self::LABELS)) ? $role : 'atl_user';
+        return array_key_exists($role, self::LABELS) ? $role : 'operations';
     }
 
     public static function isDeveloper(): bool
     {
-        return self::actual() === self::DEVELOPER;
+        return self::actual() === 'developer';
     }
 
-    /** Only Developers can switch the interface they are viewing. */
+    /** Real accounts with a fixed role cannot switch. Developers, and demo mode without a role column, can. */
     public static function canSwitch(): bool
     {
-        return self::isDeveloper();
+        return self::isDeveloper() || empty(optional(auth()->user())->role);
     }
 
-    /** The interface being shown. For a Developer this is the role chosen under "Viewing as". */
+    public static function setView(string $role): void
+    {
+        if (self::isDeveloper() && in_array($role, self::VIEWABLE, true)) {
+            session(['dev_view' => $role]);
+        } elseif (empty(optional(auth()->user())->role) && array_key_exists($role, self::LABELS)) {
+            session(['demo_role' => $role]);
+            session()->forget('dev_view');
+        }
+    }
+
+    /** The interface being shown. For a Developer this is the role chosen under "Viewing as" (Admin / IT by default). */
     public static function current(): string
     {
         $actual = self::actual();
-
-        if ($actual !== self::DEVELOPER) {
+        if ($actual !== 'developer') {
             return $actual;
         }
 
-        $view = session('view_as', 'operations');
+        $view = session('dev_view', 'admin');
 
-        return in_array($view, self::VIEWABLE, true) ? $view : 'operations';
+        return in_array($view, self::VIEWABLE, true) ? $view : 'admin';
     }
 
     public static function can(string $permission): bool

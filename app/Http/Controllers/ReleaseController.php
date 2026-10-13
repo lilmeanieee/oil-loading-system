@@ -12,6 +12,10 @@ class ReleaseController extends Controller
     {
         abort_unless(Role::can('documents.view'), 403);
 
+        if (Role::current() === 'operations') {
+            return app(OperationsController::class)->documents();
+        }
+
         return view('documents.index', ['documents' => DemoData::documents()]);
     }
 

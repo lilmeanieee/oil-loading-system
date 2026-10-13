@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Support\DemoData;
+use App\Models\User;
 use App\Support\Role;
 
 class DashboardController extends Controller
@@ -45,7 +46,7 @@ class DashboardController extends Controller
                 'Total ATLs'   => $atls->count(),
                 'Sync issues'  => collect(DemoData::devices())->where('state', 'Conflict')->count(),
             ],
-            'registrations' => DemoData::registrations(),
+            'registrations' => User::registrationQueue(),
             'devices'       => DemoData::devices(),
             'audit'         => array_slice(DemoData::audit(), 0, 4),
             'recentAtls'    => $atls->sortByDesc('id')->take(4)->values()->all(),

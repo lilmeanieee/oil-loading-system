@@ -78,7 +78,7 @@ class VerifyCodeController extends Controller
         $remember = (bool) $request->session()->pull('pending_remember', false);
         $request->session()->forget('pending_user_id');
 
-        Auth::login($user, $remember);
+        $user->forceFill(['last_login_at' => now()])->save();
         $request->session()->regenerate();
 
         return redirect()->intended(route('dashboard'));

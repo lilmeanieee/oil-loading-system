@@ -72,7 +72,7 @@
                                 <td class="px-4 py-3">{{ $u['email'] }}</td>
                                 <td class="px-4 py-3">{{ $roles[$u['role']] }}</td>
                                 <td class="px-4 py-3"><x-status-badge :status="$u['status']" /></td>
-                                <td class="whitespace-nowrap px-4 py-3">{{ \Carbon\Carbon::parse($u['last_login'])->format('M d, g:i A') }}</td>
+                                <td class="whitespace-nowrap px-4 py-3">{{ $u['last_login'] ? \Carbon\Carbon::parse($u['last_login'])->format('M d, g:i A') : 'Never' }}</td>
                                 <td class="whitespace-nowrap px-4 py-3 text-right">
                                     <button type="button" @click="editing = !editing" class="{{ $btn }} border border-slate-300 text-slate-700 hover:bg-slate-50">Change role</button>
                                     <form method="POST" action="{{ route('users.toggle', $u['id']) }}" data-offline="online" class="inline">

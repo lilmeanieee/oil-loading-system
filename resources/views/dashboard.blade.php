@@ -22,7 +22,6 @@
 
             @include('dashboard.'.($role === 'owner' ? 'staff' : $role))
 
-            <p class="text-xs text-slate-500">Sample data. The figures are not live system data.</p>
         </div>
     </div>
 </x-app-layout>

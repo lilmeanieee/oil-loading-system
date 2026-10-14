@@ -34,7 +34,7 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            color: #1d4ed8;
+            color: #1c3d34;
             font-size: 15px;
             font-weight: 600;
             text-decoration: none;
@@ -57,7 +57,7 @@
             color: #6b7280;
         }
         .subtitle .email { white-space: nowrap; }
-        .subtitle a { color: #1d4ed8; margin-left: 4px; vertical-align: middle; }
+        .subtitle a { color: #1c3d34; margin-left: 4px; vertical-align: middle; }
 
         .code-inputs {
             display: flex;
@@ -78,7 +78,7 @@
             transition: border-color .15s, box-shadow .15s;
         }
         .code-inputs input:focus {
-            border-color: #1d4ed8;
+            border-color: #1c3d34;
             box-shadow: 0 0 0 3px rgba(29, 78, 216, .15);
         }
         .code-inputs.has-error input { border-color: #dc2626; }
@@ -101,15 +101,15 @@
             height: 45px;
             border: 0;
             border-radius: 6px;
-            background: #1d4ed8;
+            background: #1c3d34;
             color: #fff;
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
             transition: background .15s;
         }
-        .btn:hover { background: #1e40af; }
-        .btn:disabled { background: #93a5e8; cursor: not-allowed; }
+        .btn:hover { background: #2a5a4c; }
+        .btn:disabled { background: #1c3d34; cursor: not-allowed; }
 
         .resend {
             margin-top: 24px;
@@ -123,7 +123,7 @@
             padding: 0;
             font: inherit;
             font-weight: 600;
-            color: #1d4ed8;
+            color: #1c3d34;
             cursor: pointer;
         }
         .resend button:hover { text-decoration: underline; }
@@ -178,17 +178,15 @@
             <p class="error">{{ $message }}</p>
         @enderror
 
-        <button type="submit" class="btn" id="continue-btn">Continue</button>
+        <button type="submit" class="btn " id="continue-btn">Continue</button>
     </form>
 
     <form method="POST" action="{{ route('verify.resend') }}" class="resend">
         @csrf
         Not received yet?
-        <button type="submit" id="resend-btn">Resend verification code</button>
+        <button type="submit" id="resend-btn" >Resend verification code</button>
     </form>
 </div>
-
-<div class="secured">Secured by <strong>YourApp</strong></div>
 
 <script>
     const boxes = Array.from(document.querySelectorAll('#code-inputs input'));

@@ -94,21 +94,6 @@
                             </div>
 
                             <div class="border-b border-slate-100 px-5 py-4">
-                                <h4 class="mb-2 text-sm font-semibold text-slate-900">Verification</h4>
-                                <template x-for="k in CHK" :key="k[0]">
-                                    <div class="flex items-start gap-3 py-2">
-                                        <input type="checkbox" :id="'c_' + k[0]" class="mt-1 rounded border-slate-300 text-[#1c3d34] focus:ring-emerald-700"
-                                               :checked="!!ck[k[0]]" :disabled="!(cur.st === 'pending' || cur.st === 'resubmitted')" x-on:change="tick(k[0], $event.target.checked)">
-                                        <label :for="'c_' + k[0]" class="min-w-0 flex-1 text-sm">
-                                            <span class="font-medium text-slate-900" x-text="k[1]"></span>
-                                            <span class="block" :class="{ 'text-slate-600': checksFor(cur)[k[0]].s === 'ok', 'text-amber-700': checksFor(cur)[k[0]].s === 'warn', 'text-red-700': checksFor(cur)[k[0]].s === 'bad' }" x-text="checksFor(cur)[k[0]].n"></span>
-                                        </label>
-                                        <span :class="pill(checksFor(cur)[k[0]].s === 'ok' ? 'ok' : checksFor(cur)[k[0]].s === 'bad' ? 'bad' : 'warn')" x-text="checksFor(cur)[k[0]].s === 'ok' ? 'Matches' : checksFor(cur)[k[0]].s === 'bad' ? 'Flagged' : 'Check'"></span>
-                                    </div>
-                                </template>
-                            </div>
-
-                            <div class="border-b border-slate-100 px-5 py-4">
                                 <h4 class="mb-2 text-sm font-semibold text-slate-900" x-text="(cur.st === 'pending' || cur.st === 'resubmitted') ? 'Decision' : 'Outcome'"></h4>
 
                                 <template x-if="cur.st === 'pending' || cur.st === 'resubmitted'">
@@ -117,7 +102,7 @@
                                             <button type="button" @click="approve()" :disabled="!canApprove" class="rounded-lg bg-[#1c3d34] px-4 py-2 text-sm font-medium text-white hover:bg-[#2a5a4c] disabled:cursor-not-allowed disabled:opacity-40">Approve ATL</button>
                                             <button type="button" @click="mode = 'return'" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">Return for correction</button>
                                             <button type="button" @click="mode = 'decline'" class="rounded-lg border border-red-300 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50">Decline</button>
-                                            <p class="w-full text-xs text-slate-500" x-show="!canApprove">Tick every verification line to approve. An ATL with a flagged check cannot be approved.</p>
+                                            <p class="w-full text-xs text-red-700" x-show="!canApprove" x-text="'Cannot approve: ' + blockers.join(' ')"></p>
                                         </div>
                                         <div x-show="mode" x-cloak class="space-y-2">
                                             <label for="reason" class="block text-sm font-medium text-slate-700" x-text="mode === 'return' ? 'What does the hauler need to correct?' : 'Why is this ATL declined?'"></label>

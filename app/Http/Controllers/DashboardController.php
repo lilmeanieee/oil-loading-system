@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Support\DemoData;
+use App\Models\User;
 use App\Support\Role;
 
 class DashboardController extends Controller
@@ -39,7 +40,7 @@ class DashboardController extends Controller
 
     private function adminData($atls): array
     {
-        $users = collect(DemoData::users());
+        $users = collect(User::directory());
         $trucks = collect(DemoData::trucks());
 
         return [
@@ -49,13 +50,13 @@ class DashboardController extends Controller
                 'Total ATLs'   => $atls->count(),
                 'Sync issues'  => collect(DemoData::devices())->where('state', 'Conflict')->count(),
             ],
-            'registrations' => DemoData::registrations(),
+            'registrations' => User::registrationQueue(),
             'devices'       => DemoData::devices(),
             'audit'         => array_slice(DemoData::audit(), 0, 4),
             'recentAtls'    => $atls->sortByDesc('id')->take(4)->values()->all(),
             'alerts'        => $trucks->filter(fn ($t) => collect($t['cert_list'])->contains(fn ($c) => $c['status'] !== 'Valid'))->values()->all(),
             'driverAlerts'  => collect(DemoData::drivers())->filter(fn ($d) => DemoData::certStatus($d['license_expiry']) !== 'Valid')->values()->all(),
-            'lastLogins'    => $users->sortByDesc('last_login')->take(4)->values()->all(),
+            'lastLogins'    => $users->whereNotNull('last_login')->sortByDesc('last_login')->take(4)->values()->all(),
         ];
     }
 

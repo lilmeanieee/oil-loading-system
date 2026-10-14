@@ -5,6 +5,7 @@
         <p class="mt-1 text-sm text-slate-600">We sent a 6-digit code to <strong>{{ $email }}</strong>. This confirms that the address is yours.</p>
     </div>
 
+    <x-auth-session-status class="mb-4" :status="session('status')" />
     <form method="POST" action="{{ route('register.confirm') }}" class="space-y-4"
           x-data="{ code: '', left: 600, wait: 60, tries: 5,
                     init() { setInterval(() => { if (this.left > 0) this.left--; if (this.wait > 0) this.wait--; }, 1000) },
@@ -26,10 +27,10 @@
         <button type="submit" :disabled="code.length !== 6 || left <= 0" class="w-full rounded-lg bg-[#1c3d34] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#2a5a4c] disabled:cursor-not-allowed disabled:opacity-50">Verify</button>
 
         <div class="text-center text-sm">
-            <button type="button" :disabled="wait > 0" @click="wait = 60; left = 600" class="text-[#1c3d34] underline disabled:cursor-not-allowed disabled:text-slate-400 disabled:no-underline">
+            <button type="submit" formaction="{{ route('register.resend') }}" formnovalidate :disabled="wait > 0" class="text-[#1c3d34] underline disabled:cursor-not-allowed disabled:text-slate-400 disabled:no-underline">">
                 <span x-show="wait > 0">Send a new code in <span x-text="wait"></span>s</span><span x-show="wait <= 0" x-cloak>Send a new code</span>
             </button>
         </div>
-        <p class="text-xs text-slate-500">Demo screen: any 6-digit code is accepted. The real system checks the code, its expiry, the try limit, and that a code is never used twice.</p>
+        
     </form>
 </x-guest-layout>

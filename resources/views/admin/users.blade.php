@@ -16,6 +16,10 @@
         <div class="mx-auto max-w-6xl space-y-5 px-4 sm:px-6 lg:px-8">
             @if (session('status'))<div class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{{ session('status') }}</div>@endif
             @if ($errors->any())<div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{{ $errors->first() }}</div>@endif
+            <div x-data="{ fresh: 0 }" @notification-received.window="if ($event.detail.kind === 'account_request') fresh++" x-show="fresh" x-cloak class="flex items-center justify-between rounded-lg border border-orange-200 bg-orange-50 px-4 py-3 text-sm text-orange-900">
+                <span>A new account request just arrived.</span>
+                <a href="{{ route('users.index') }}" class="font-medium underline">Refresh the list</a>
+            </div>
 
             <div class="flex gap-2 border-b border-slate-200" role="tablist">
                 <button type="button" role="tab" @click="tab = 'queue'" :aria-selected="tab === 'queue'" class="{{ $tab }}" :class="tab === 'queue' ? 'border-[#1c3d34] text-slate-900' : 'border-transparent text-slate-500'">Registration queue ({{ count($registrations) }})</button>
@@ -72,7 +76,7 @@
                                 <td class="px-4 py-3">{{ $u['email'] }}</td>
                                 <td class="px-4 py-3">{{ $roles[$u['role']] }}</td>
                                 <td class="px-4 py-3"><x-status-badge :status="$u['status']" /></td>
-                                <td class="whitespace-nowrap px-4 py-3">{{ \Carbon\Carbon::parse($u['last_login'])->format('M d, g:i A') }}</td>
+                                <td class="whitespace-nowrap px-4 py-3">{{ $u['last_login'] ? \Carbon\Carbon::parse($u['last_login'])->format('M d, g:i A') : 'Never' }}</td>
                                 <td class="whitespace-nowrap px-4 py-3 text-right">
                                     <button type="button" @click="editing = !editing" class="{{ $btn }} border border-slate-300 text-slate-700 hover:bg-slate-50">Change role</button>
                                     <form method="POST" action="{{ route('users.toggle', $u['id']) }}" data-offline="online" class="inline">

@@ -15,6 +15,8 @@ use App\Http\Controllers\Auth\VerifyCodeController;
 use App\Support\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\RegistrationController;
+use App\Http\Controllers\NotificationController;
 
 // The login page is the index. Signed-in users are sent to the dashboard automatically.
 Route::redirect('/', '/login');
@@ -24,11 +26,12 @@ Route::get('/pwa/ping', [PwaController::class, 'ping'])->name('pwa.ping');
 
 // Registration: request an account, verify the email, wait for admin approval.
 Route::middleware('guest')->group(function () {
-    Route::get('/register', [AuthDemoController::class, 'register'])->name('register');
-    Route::post('/register', [AuthDemoController::class, 'storeRegister'])->name('register.store');
-    Route::get('/register/verify', [AuthDemoController::class, 'verify'])->name('register.verify');
-    Route::post('/register/verify', [AuthDemoController::class, 'confirm'])->name('register.confirm');
-    Route::get('/register/pending', [AuthDemoController::class, 'pending'])->name('register.pending');
+    Route::get('/register', [RegistrationController::class, 'create'])->name('register');
+    Route::post('/register', [RegistrationController::class, 'store'])->middleware('throttle:6,1')->name('register.store');
+    Route::get('/register/verify', [RegistrationController::class, 'verify'])->name('register.verify');
+    Route::post('/register/verify', [RegistrationController::class, 'confirm'])->middleware('throttle:10,1')->name('register.confirm');
+    Route::post('/register/verify/resend', [RegistrationController::class, 'resend'])->middleware('throttle:5,1')->name('register.resend');
+    Route::get('/register/pending', [RegistrationController::class, 'pending'])->name('register.pending');
 });
 
 Route::middleware('auth')->group(function () {
@@ -36,6 +39,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/pwa/urls', [PwaController::class, 'urls'])->name('pwa.urls');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/notifications/read', [NotificationController::class, 'readAll'])->name('notifications.read');
 
     // Authority to Load
     Route::get('/atl', [AtlController::class, 'index'])->name('atl.index');

@@ -1,8 +1,9 @@
 @php
-    $live = auth()->check() && \App\Support\Role::can('users.manage');
     $role = \App\Support\Role::current();
     $portal = \App\Support\Role::portal();
     $notes = \App\Support\DemoData::notifications($role);
+    // Admins, and Developers on any interface, get the real (live) notifications.
+    $live = auth()->check() && (\App\Support\Role::isDeveloper() || \App\Support\Role::can('users.manage'));
 @endphp
 <header class="relative z-30 bg-[#1c3d34] text-white print:hidden">
     <div class="flex items-center justify-between px-4 py-3 sm:px-6">
@@ -18,38 +19,40 @@
         </div>
 
         <div class="flex items-center gap-1">
-            <div class="relative" x-data="{ open: false }" @keydown.escape.window="open = false">
-                <button type="button" @click="open = !open" class="relative rounded-full p-2 hover:bg-white/10" aria-label="Notifications" :aria-expanded="open">
-                    <x-icon name="bell" class="h-6 w-6" />
-                    @if (count($notes))<span class="absolute right-1.5 top-1.5 h-2.5 w-2.5 rounded-full bg-orange-400"></span>@endif
-                </button>
-                <div x-show="open" x-cloak @click.outside="open = false" class="absolute right-0 z-50 mt-2 w-72 rounded-lg bg-white p-3 text-sm text-slate-800 shadow-xl">
-                    <p class="mb-2 font-semibold">Notifications</p>
-                    @forelse ($notes as $n)
-                        <div class="border-t border-slate-100 py-2"><p>{{ $n['text'] }}</p><p class="text-xs text-slate-500">{{ \Carbon\Carbon::parse($n['at'])->format('M d, g:i A') }}</p></div>
-                    @empty
-                        <p class="border-t border-slate-100 py-2 text-slate-500">Nothing new.</p>
-                    @endforelse
-                </div>
-            </div>
-
+            {{-- Notifications: real and live for Admin/Developer, sample data for the other roles --}}
             @if ($live)
                 <x-live-bell />
             @else
+                <div class="relative" x-data="{ open: false }" @keydown.escape.window="open = false">
+                    <button type="button" @click="open = !open" class="relative rounded-full p-2 hover:bg-white/10" aria-label="Notifications" :aria-expanded="open">
+                        <x-icon name="bell" class="h-6 w-6" />
+                        @if (count($notes))<span class="absolute right-1.5 top-1.5 h-2.5 w-2.5 rounded-full bg-orange-400"></span>@endif
+                    </button>
+                    <div x-show="open" x-cloak @click.outside="open = false" class="absolute right-0 z-50 mt-2 w-72 rounded-lg bg-white p-3 text-sm text-slate-800 shadow-xl">
+                        <p class="mb-2 font-semibold">Notifications</p>
+                        @forelse ($notes as $n)
+                            <div class="border-t border-slate-100 py-2"><p>{{ $n['text'] }}</p><p class="text-xs text-slate-500">{{ \Carbon\Carbon::parse($n['at'])->format('M d, g:i A') }}</p></div>
+                        @empty
+                            <p class="border-t border-slate-100 py-2 text-slate-500">Nothing new.</p>
+                        @endforelse
+                    </div>
+                </div>
+            @endif
 
+            {{-- Account menu: profile, Developer "Viewing as" switcher, log out --}}
             <div class="relative" x-data="{ open: false }" @keydown.escape.window="open = false">
                 <button type="button" @click="open = !open" class="rounded-full p-2 hover:bg-white/10" aria-label="Account menu" :aria-expanded="open"><x-icon name="account" class="h-6 w-6" /></button>
                 <div x-show="open" x-cloak @click.outside="open = false" class="absolute right-0 z-50 mt-2 w-64 space-y-3 rounded-lg bg-white p-4 text-sm text-slate-800 shadow-xl">
                     <div><p class="font-semibold">{{ Auth::user()->name }}</p><p class="text-xs text-slate-500">{{ \App\Support\Role::LABELS[\App\Support\Role::actual()] }}</p></div>
                     <a href="{{ route('account.show') }}" class="block text-[#1c3d34] hover:underline">My profile</a>
                     @if (\App\Support\Role::canSwitch())
-                        {{-- Developer (and demo mode): switch which role's interface is shown --}}
-                        <form method="POST" action="{{ route('demo.role') }}" data-offline="online" data-pwa-clear>
+                        {{-- Developers can open every interface/dashboard --}}
+                        <form method="POST" action="{{ route('developer.view-as') }}" data-offline="online" data-pwa-clear>
                             @csrf
-                            <label for="demo_role" class="mb-1 block text-xs text-slate-500">Viewing as{{ \App\Support\Role::isDeveloper() ? '' : ' (demo)' }}</label>
-                            <select id="demo_role" name="role" onchange="this.form.requestSubmit()" class="w-full rounded border-slate-300 py-1.5 text-sm focus:border-emerald-700 focus:ring-emerald-700">
+                            <label for="header_view_as" class="mb-1 block text-xs text-slate-500">Viewing as</label>
+                            <select id="header_view_as" name="role" onchange="this.form.requestSubmit()" class="w-full rounded border-slate-300 py-1.5 text-sm focus:border-emerald-700 focus:ring-emerald-700">
                                 @foreach (\App\Support\Role::LABELS as $key => $label)
-                                    @continue($key === 'developer' && \App\Support\Role::isDeveloper())
+                                    @continue($key === 'developer')
                                     <option value="{{ $key }}" @selected($role === $key)>{{ $label }}</option>
                                 @endforeach
                             </select>
@@ -61,7 +64,6 @@
                     </form>
                 </div>
             </div>
-            @endif
         </div>
     </div>
 </header>

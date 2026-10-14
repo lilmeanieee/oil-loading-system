@@ -2,8 +2,9 @@
     $role = \App\Support\Role::current();
     $portal = \App\Support\Role::portal();
     $notes = \App\Support\DemoData::notifications($role);
-    // Admins, and Developers on any interface, get the real (live) notifications.
-    $live = auth()->check() && (\App\Support\Role::isDeveloper() || \App\Support\Role::can('users.manage'));
+    // Account-request notifications belong to the Admin / IT interface only.
+    // A Developer sees them only while "Viewing as" Admin / IT.
+    $live = auth()->check() && \App\Support\Role::can('users.manage');
 @endphp
 <header class="relative z-30 bg-[#1c3d34] text-white print:hidden">
     <div class="flex items-center justify-between px-4 py-3 sm:px-6">

@@ -17,6 +17,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegistrationController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\HaulerController;
+use App\Http\Controllers\DriverController;
+use App\Http\Controllers\TruckController;
 
 // The login page is the index. Signed-in users are sent to the dashboard automatically.
 Route::redirect('/', '/login');
@@ -65,6 +68,13 @@ Route::middleware('auth')->group(function () {
 
     // Master data
     Route::get('/hauler-management', [HaulerManagementController::class, 'index'])->name('haulers.index');
+    Route::post('/hauler-management/haulers', [HaulerController::class, 'store'])->name('haulers.store');
+    Route::put('/hauler-management/haulers/{id}', [HaulerController::class, 'update'])->whereNumber('id')->name('haulers.update');
+    Route::post('/hauler-management/trucks', [TruckController::class, 'store'])->name('trucks.store');
+    Route::put('/hauler-management/trucks/{id}', [TruckController::class, 'update'])->whereNumber('id')->name('trucks.update');
+    Route::get('/hauler-management/trucks/{id}/documents/{type}', [TruckController::class, 'document'])->whereNumber('id')->where('type', 'or|cr|cal')->name('trucks.document');
+    Route::put('/hauler-management/drivers/{id}', [DriverController::class, 'update'])->whereNumber('id')->name('drivers.update');
+
     // Old URLs still work and open the matching tab.
     Route::redirect('/trucks', '/hauler-management?tab=trucks')->name('trucks.index');
     Route::redirect('/drivers', '/hauler-management?tab=drivers')->name('drivers.index');

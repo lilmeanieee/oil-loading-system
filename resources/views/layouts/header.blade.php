@@ -2,7 +2,7 @@
     $role = \App\Support\Role::current();
     $portal = \App\Support\Role::portal();
     $notes = \App\Support\DemoData::notifications($role);
-    // Account-request notifications belong to the Admin / IT interface only.
+     // Account-request notifications belong to the Admin / IT interface only.
     // A Developer sees them only while "Viewing as" Admin / IT.
     $live = auth()->check() && \App\Support\Role::can('users.manage');
 @endphp

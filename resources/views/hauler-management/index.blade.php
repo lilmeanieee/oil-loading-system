@@ -81,20 +81,18 @@
                 {{-- Drivers --}}
                 <div x-show="hv === 'drivers'" x-cloak class="overflow-x-auto">
                     <table class="min-w-full text-sm">
-                        <thead class="bg-slate-50 text-left text-slate-600"><tr><th class="{{ $th }}">Driver</th><th class="{{ $th }}">Hauler</th><th class="{{ $th }}">Truck</th><th class="{{ $th }}">Licence no.</th><th class="{{ $th }}">Licence expiry</th><th class="{{ $th }}">Phone</th><th class="{{ $th }}"></th></tr></thead>
+                        <thead class="bg-slate-50 text-left text-slate-600"><tr><th class="{{ $th }}">Driver</th><th class="{{ $th }}">Hauler</th><th class="{{ $th }}">Truck Plate No.</th><th class="{{ $th }}">Phone</th><th class="{{ $th }}"></th></tr></thead>
                         <tbody class="divide-y divide-slate-100">
                             <template x-for="x in fDrivers" :key="x.id">
                                 <tr>
                                     <td class="px-4 py-3 font-medium text-slate-900" x-text="x.name"></td>
                                     <td class="px-4 py-3" x-text="hauler(x.h).name"></td>
                                     <td class="px-4 py-3 text-xs" x-text="driverRole(x)"></td>
-                                    <td class="whitespace-nowrap px-4 py-3 font-mono text-xs" x-text="x.lic || '-'"></td>
-                                    <td class="px-4 py-3"><span :class="pill(certState(x.exp)[0])" x-text="certState(x.exp)[1]"></span></td>
                                     <td class="whitespace-nowrap px-4 py-3 font-mono text-xs" x-text="x.phone || '-'"></td>
                                     <td class="whitespace-nowrap px-4 py-3 text-right"><button type="button" @click="openForm('driver', x.id, true)" class="font-medium text-slate-700 hover:underline">View</button><button type="button" x-show="canManage" @click="openForm('driver', x.id)" class="ml-3 font-medium text-emerald-800 hover:underline">Edit</button></td>
                                 </tr>
                             </template>
-                            <tr x-show="!fDrivers.length"><td colspan="7" class="px-4 py-8 text-center text-slate-500">No drivers match.</td></tr>
+                            <tr x-show="!fDrivers.length"><td colspan="5" class="px-4 py-8 text-center text-slate-500">No drivers match.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -118,7 +116,7 @@
                                     <div class="grid gap-3 sm:grid-cols-2">
                                         <div><label class="{{ $lb }}" for="f_name">Company name <span class="text-red-600">*</span></label><input id="f_name" x-model="hf.name" class="{{ $in }}"></div>
                                         <div><label class="{{ $lb }}" for="f_contact">Contact person</label><input id="f_contact" x-model="hf.contact" class="{{ $in }}"></div>
-                                        <div><label class="{{ $lb }}" for="f_phone">Contact number</label><input id="f_phone" type="tel" x-model="hf.phone" class="{{ $in }}"></div>
+                                        <div><label class="{{ $lb }}" for="f_phone">Contact number</label><input id="f_phone" type="tel" inputmode="numeric" placeholder="09XXXXXXXXX" x-model="hf.phone" @input="hf.phone = (hf.phone || '').replace(/[^0-9]/g, '').slice(0, 11)" class="{{ $in }}"></div>
                                     </div>
                                     <div><label class="{{ $lb }}" for="f_addr">Company address <span class="text-red-600">*</span></label><input id="f_addr" x-model="hf.addr" class="{{ $in }}"></div>
                                 </div>
@@ -129,10 +127,8 @@
                                 <div class="grid gap-3 sm:grid-cols-2">
                                     <div><label class="{{ $lb }}" for="f_dname">Full name</label><input id="f_dname" x-model="hf.name" class="{{ $in }}"></div>
                                     <div><label class="{{ $lb }}">Hauler</label><input :value="hauler(hf.h).name" disabled class="{{ $in }} bg-slate-50"></div>
-                                    <div class="sm:col-span-2"><label class="{{ $lb }}">Truck</label><input :value="driverRole(driver(hf.id) )" disabled class="{{ $in }} bg-slate-50"></div>
-                                    <div><label class="{{ $lb }}" for="f_lic">Licence number <span class="text-red-600">*</span></label><input id="f_lic" x-model="hf.lic" class="{{ $in }}"></div>
-                                    <div><label class="{{ $lb }}" for="f_exp">Licence expiry <span class="text-red-600">*</span></label><input id="f_exp" type="date" x-model="hf.exp" class="{{ $in }}"></div>
-                                    <div><label class="{{ $lb }}" for="f_dphone">Contact number</label><input id="f_dphone" type="tel" x-model="hf.phone" class="{{ $in }}"></div>
+                                    <div class="sm:col-span-2"><label class="{{ $lb }}">Truck Plate No.</label><input :value="driverRole(driver(hf.id) )" disabled class="{{ $in }} bg-slate-50"></div>
+                                    <div><label class="{{ $lb }}" for="f_dphone">Contact number</label><input id="f_dphone" type="tel" inputmode="numeric" placeholder="09XXXXXXXXX" x-model="hf.phone" @input="hf.phone = (hf.phone || '').replace(/[^0-9]/g, '').slice(0, 11)" class="{{ $in }}"></div>
                                 </div>
                             </template>
 
@@ -150,7 +146,7 @@
                                         <div class="sm:col-span-2">
                                             <label class="{{ $lb }}" for="f_td">Driver (full name)</label>
                                             <input id="f_td" x-model="hf.dname" autocomplete="off" placeholder="Full name" class="{{ $in }}">
-                                            <p class="mt-1 text-xs text-slate-500">Each driver is assigned to one truck. Licence details can be added later in the Drivers tab.</p>
+                                            <p class="mt-1 text-xs text-slate-500">Each driver is assigned to one truck.</p>
                                         </div>
                                     </div>
 
@@ -189,11 +185,12 @@
                                         <div class="space-y-3">
                                             <template x-for="c in DOCS" :key="c[0]">
                                                 <div class="grid gap-3 rounded-lg border border-slate-200 p-3 sm:grid-cols-2">
-                                                    <div><label class="mb-1 block text-sm text-slate-700" :for="'f_e_' + c[0]" x-text="c[1] + ' expiry date'"></label><input :id="'f_e_' + c[0]" type="date" x-model="hf.docs[c[0]].exp" class="{{ $in }}"></div>
+                                                    <div><label class="mb-1 block text-sm text-slate-700" :for="'f_e_' + c[0]" x-text="c[1] + ' expiry date'"></label><input :id="'f_e_' + c[0]" type="date" x-model="hf.docs[c[0]].exp" :min="minExpiry" class="{{ $in }}"></div>
                                                     <div>
                                                         <label class="mb-1 block text-sm text-slate-700" :for="'f_u_' + c[0]" x-text="c[2] + ' file upload'"></label>
                                                         <input :id="'f_u_' + c[0]" type="file" accept=".pdf,.jpg,.jpeg,.png" @change="pickFile(c[0], $event)" class="block w-full text-sm text-slate-700 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:text-sm file:font-medium file:text-slate-700 hover:file:bg-slate-200">
                                                         <p class="mt-1 text-xs text-slate-500" x-text="hf.docs[c[0]].file ? 'File: ' + hf.docs[c[0]].file : 'No file uploaded'"></p>
+                                                        <a x-show="hf.docs[c[0]].url" :href="hf.docs[c[0]].url" target="_blank" class="mt-1 inline-block text-xs font-medium text-emerald-800 hover:underline">View saved file</a>
                                                     </div>
                                                 </div>
                                             </template>
@@ -227,7 +224,7 @@
                         <div><label class="{{ $lb }}" for="nh_addr">Company address <span class="text-red-600">*</span></label><input id="nh_addr" x-model="hc.addr" class="{{ $in }}"></div>
                         <div class="grid gap-3 sm:grid-cols-2">
                             <div><label class="{{ $lb }}" for="nh_contact">Contact person</label><input id="nh_contact" x-model="hc.contact" class="{{ $in }}"></div>
-                            <div><label class="{{ $lb }}" for="nh_phone">Contact number</label><input id="nh_phone" type="tel" x-model="hc.phone" class="{{ $in }}"></div>
+                            <div><label class="{{ $lb }}" for="nh_phone">Contact number</label><input id="nh_phone" type="tel" inputmode="numeric" placeholder="09XXXXXXXXX" x-model="hc.phone" @input="hc.phone = (hc.phone || '').replace(/[^0-9]/g, '').slice(0, 11)" class="{{ $in }}"></div>
                         </div>
                         <p class="text-sm text-red-700" x-text="cErr"></p>
                         <div class="flex flex-wrap justify-end gap-2">

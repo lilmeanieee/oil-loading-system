@@ -33,7 +33,7 @@
   };
   var CHK = [
     ['truck', 'Truck', 'Plate, registration and certificates'],
-    ['driver', 'Driver', 'Licence and hauler match'],
+    ['driver', 'Driver', 'Driver belongs to the hauler'],
     ['hauler', 'Hauler', 'On file and matches truck'],
     ['products', 'Products', 'Product named for every compartment'],
     ['liters', 'Liters', 'Total against truck capacity'],
@@ -59,7 +59,7 @@
   var DOCS = [['or', 'Official Receipt (OR)', 'OR'], ['cr', 'Certificate of Registration (CR)', 'CR'], ['cal', 'Calibration certificate', 'Calibration']];
   function normalize(d) {
     d.haulers.forEach(function (h) { delete h.active; });
-    d.drivers.forEach(function (x) { if (x.exp == null) x.exp = ''; if (x.lic == null) x.lic = ''; if (x.phone == null) x.phone = ''; });
+    d.drivers.forEach(function (x) { if (x.phone == null) x.phone = ''; });
     d.trucks.forEach(function (t) {
       if (!t.docs) {
         t.docs = {
@@ -78,11 +78,38 @@
   function load(seed) {
     try {
       var s = JSON.parse(localStorage.getItem(KEY));
-      if (s && s.ver === seed.ver) { s.user = seed.user; if (s.staff.indexOf(seed.user) < 0) s.staff.unshift(seed.user); return normalize(s); }
+      if (s && s.ver === seed.ver) { s.user = seed.user; s.haulers = JSON.parse(JSON.stringify(seed.haulers)); s.drivers = JSON.parse(JSON.stringify(seed.drivers)); s.trucks = JSON.parse(JSON.stringify(seed.trucks)); /* haulers, drivers and trucks live in the database now */ if (s.staff.indexOf(seed.user) < 0) s.staff.unshift(seed.user); return normalize(s); }
     } catch (e) { /* ignore */ }
     return normalize(JSON.parse(JSON.stringify(seed)));
   }
   function save(d) { try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) { /* ignore */ } }
+
+  /* Philippine mobile number: 11 digits starting with 09 (spaces and dashes are ignored). The server saves it as 09XX XXX XXXX. */
+  var PHONE_MSG = 'Enter a mobile number like 09171234567 (11 digits, starting with 09).';
+  function badPhone(s) { var t = String(s == null ? '' : s).trim(); return t !== '' && !/^09\d{9}$/.test(t.replace(/[\s-]/g, '')); }
+
+  /* Files chosen in the truck form (kept outside Alpine so they can be sent to the server). */
+  var PICKED = {};
+  function isoDate(d) { return d.getFullYear() + '-' + two(d.getMonth() + 1) + '-' + two(d.getDate()); }
+
+  /* Real requests to the Laravel backend. Resolves with the JSON reply, or throws an Error with a readable message. */
+  function api(method, url, body) {
+    var cfg = window.OPS_API || {};
+    var isForm = typeof FormData !== 'undefined' && body instanceof FormData;
+    var headers = { 'Accept': 'application/json', 'X-CSRF-TOKEN': cfg.csrf || '', 'X-Requested-With': 'XMLHttpRequest' };
+    if (!isForm) headers['Content-Type'] = 'application/json';
+    return fetch(url, { method: method, credentials: 'same-origin', headers: headers, body: isForm ? body : JSON.stringify(body) }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) {
+        if (r.ok) return j;
+        var first = j && j.errors ? Object.values(j.errors)[0] : null;
+        var m = (first && first[0]) || (j && j.message) || 'The server could not save this. Please try again.';
+        if (r.status === 401 || r.status === 419) m = 'Your session expired. Refresh the page and sign in again.';
+        if (r.status === 403) m = 'You do not have permission to do this.';
+        if (r.status === 413) m = 'The files are too large. Each file must be 5 MB or smaller.';
+        throw new Error(m);
+      });
+    }, function () { throw new Error('You appear to be offline. Connect and try again.'); });
+  }
 
   function OpsApp(seed, opts) {
     opts = opts || {};
@@ -102,7 +129,7 @@
       docF: q.f || 'all', search: q.q || '', docId: q.id || null, modal: null, rpReason: 'Paper jam or misprint',
       hStaff: '', hTime: '',
       /* hauler management */
-      hv: q.tab || 'haulers', hq: '', hf: null, hErr: '',
+      hv: q.tab || 'haulers', hq: '', hf: null, hErr: '', saving: false,
 
       init: function () {
         this.d = load(seed);
@@ -145,16 +172,13 @@
           var ex = list.filter(function (x) { return x[1] < 0; }), so = list.filter(function (x) { return x[1] >= 0 && x[1] <= 30; });
           r.truck = ex.length ? { s: 'bad', n: ex.map(function (x) { return x[0] + ' expired ' + fmtD(x[2]); }).join('; ') + '.' }
             : so.length ? { s: 'warn', n: so.map(function (x) { return x[0] + ' expires in ' + x[1] + ' days'; }).join('; ') + '.' }
-            : { s: 'ok', n: 'Registered, all certificates valid.' };
+              : { s: 'ok', n: 'Registered, all certificates valid.' };
           if (t.h !== a.h && r.truck.s === 'ok') r.truck = { s: 'bad', n: 'Truck is registered under ' + this.hauler(t.h).name + '.' };
         }
         if (!dr) r.driver = { s: 'bad', n: 'Driver is not on file.' };
         else {
-          var n = daysTo(dr.exp);
-          r.driver = !dr.exp ? { s: 'bad', n: 'Licence details have not been entered yet.' } : n < 0 ? { s: 'bad', n: 'Licence expired ' + fmtD(dr.exp) + '.' }
-            : dr.h !== a.h ? { s: 'bad', n: 'Driver belongs to ' + this.hauler(dr.h).name + '.' }
-            : n <= 60 ? { s: 'warn', n: 'Licence ' + dr.lic + ' expires in ' + n + ' days.' }
-            : { s: 'ok', n: 'Licence ' + dr.lic + ' valid to ' + fmtD(dr.exp) + '.' };
+          r.driver = dr.h !== a.h ? { s: 'bad', n: 'Driver belongs to ' + this.hauler(dr.h).name + '.' }
+            : { s: 'ok', n: dr.name + ' belongs to this hauler.' };
         }
         r.hauler = !h ? { s: 'bad', n: 'Hauler is not on file.' } : { s: 'ok', n: h.name + '.' };
         var empty = a.lines.filter(function (l) { return !l.p || !(l.l > 0); });
@@ -197,10 +221,7 @@
             if (x <= 30) al.push({ k: x < 0 ? 'bad' : 'warn', x: t.plate + ': ' + c[0] + ' ' + (x < 0 ? 'expired ' + fmtD(c[1]) : 'expires in ' + x + ' days'), href: self.u.hauler + '?tab=trucks' });
           });
         });
-        this.d.drivers.forEach(function (dr) {
-          var x = daysTo(dr.exp);
-          if (dr.exp && x <= 60) al.push({ k: x < 0 ? 'bad' : 'warn', x: dr.name + ': licence ' + (x < 0 ? 'expired' : 'expires in ' + x + ' days'), href: self.u.hauler + '?tab=drivers' });
-        });
+
         return al;
       },
       qrow: function (a, kind) {
@@ -303,10 +324,12 @@
       match: function (parts) { var t = this.hq.trim().toLowerCase(); return !t || parts.join(' ').toLowerCase().indexOf(t) >= 0; },
       get fHaulers() { var self = this; return this.d.haulers.filter(function (h) { return self.match([h.name, h.contact, h.phone, h.addr]); }); },
       get fTrucks() { var self = this; return this.d.trucks.filter(function (t) { return self.match([t.plate, self.hauler(t.h).name, self.driver(t.d).name, self.driver(t.s).name]); }); },
-      get fDrivers() { var self = this; return this.d.drivers.filter(function (x) { return self.match([x.name, x.lic, x.phone, self.hauler(x.h).name, self.driverRole(x)]); }); },
+      get fDrivers() { var self = this; return this.d.drivers.filter(function (x) { return self.match([x.name, x.phone, self.hauler(x.h).name, self.driverRole(x)]); }); },
       truckCount: function (hid) { return this.d.trucks.filter(function (t) { return t.h === hid; }).length; },
       setHv: function (k) { this.hv = k; this.hq = ''; },
       DOCS: DOCS,
+      /* earliest date the calendar allows for a document expiry: tomorrow */
+      minExpiry: isoDate(new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate() + 1)),
       hc: null, cErr: '',
       low: function (x) { return String(x == null ? '' : x).trim().toLowerCase(); },
       haulerByName: function (n) { var k = this.low(n); return k ? this.d.haulers.find(function (h) { return this.low(h.name) === k; }, this) || null : null; },
@@ -318,12 +341,13 @@
       },
       get isNewHauler() { var f = this.hf; return !!f && f.kind === 'truck' && !!f.hname.trim() && !this.haulerByName(f.hname); },
       openForm: function (kind, id, ro) {
+        PICKED = {};
         var d = this.d, f = { kind: kind, id: id || '', ro: !!ro };
-        if (kind === 'hauler') { var h = d.haulers.find(function (x) { return x.id === id; }) || { name: '', contact: '', phone: '', addr: '' }; Object.assign(f, { name: h.name, contact: h.contact, phone: h.phone, addr: h.addr }); }
-        if (kind === 'driver') { var x = d.drivers.find(function (y) { return y.id === id; }); Object.assign(f, { name: x.name, lic: x.lic, exp: x.exp, phone: x.phone, h: x.h }); }
+        if (kind === 'hauler') { var h = d.haulers.find(function (x) { return x.id === id; }) || { name: '', contact: '', phone: '', addr: '' }; Object.assign(f, { name: h.name, contact: h.contact, phone: ro ? h.phone : String(h.phone || '').replace(/\D/g, ''), addr: h.addr }); }
+        if (kind === 'driver') { var x = d.drivers.find(function (y) { return y.id === id; }); Object.assign(f, { name: x.name, phone: x.phone, h: x.h }); }
         if (kind === 'truck') {
           var t = d.trucks.find(function (y) { return y.plate === id; });
-          var docs = {}; DOCS.forEach(function (c) { var o = t ? t.docs[c[0]] : { exp: '', file: '' }; docs[c[0]] = { exp: o.exp, file: o.file }; });
+          var docs = {}; DOCS.forEach(function (c) { var o = t ? t.docs[c[0]] : { exp: '', file: '', url: '' }; docs[c[0]] = { exp: o.exp, file: o.file, url: o.url || '' }; });
           var sd = t && t.s ? d.drivers.find(function (y) { return y.id === t.s; }) : null;
           Object.assign(f, {
             plate: t ? t.plate : '', hname: t ? this.hauler(t.h).name : '',
@@ -353,7 +377,17 @@
         if (cap > 0 && others + n > cap) return 'Only ' + fmtL(Math.max(0, cap - others)) + ' left to assign.';
         return '';
       },
-      pickFile: function (k, ev) { var fl = ev.target.files && ev.target.files[0]; if (fl) this.hf.docs[k].file = fl.name; },
+      pickFile: function (k, ev) { var fl = ev.target.files && ev.target.files[0]; if (fl) { this.hf.docs[k].file = fl.name; PICKED[k] = fl; } },
+      /* a document that is new, re-uploaded or given a new date must expire after today (an old saved date is left alone) */
+      docChanged: function (f, k) { var old = f.id ? this.truck(f.id) : null; return !old || !!PICKED[k] || old.docs[k].exp !== f.docs[k].exp; },
+      /* the server replies with the up-to-date haulers, drivers and trucks */
+      applyServer: function (res) {
+        var d = this.d;
+        if (res.haulers) d.haulers = res.haulers;
+        if (res.drivers) d.drivers = res.drivers;
+        if (res.trucks) d.trucks = res.trucks;
+        normalize(d); this.persist();
+      },
       /* resolve a driver typed by name: reuse, rename or create (applied only after everything validates) */
       planDriver: function (name, hid, plate, role, curId) {
         var self = this, k = this.low(name), d = this.d;
@@ -383,17 +417,29 @@
         if (f.kind === 'hauler') {
           if (!v(f.name)) return err('Enter the company name.');
           if (!v(f.addr)) return err('Enter the company address.');
+          if (badPhone(f.phone)) return err(PHONE_MSG);
           var dup = d.haulers.find(function (x) { return self.low(x.name) === self.low(f.name) && x.id !== f.id; });
           if (dup) return err('A hauler with this company name already exists.');
           var o = { name: v(f.name), contact: v(f.contact), phone: v(f.phone), addr: v(f.addr) };
-          if (f.id) Object.assign(d.haulers.find(function (x) { return x.id === f.id; }), o);
-          else { var n = 1; while (d.haulers.some(function (x) { return x.id === 'H' + n; })) n++; d.haulers.push(Object.assign({ id: 'H' + n }, o)); }
+          if (this.saving) return;
+          this.saving = true;
+          var base = (window.OPS_API || {}).haulers;
+          api(f.id ? 'PUT' : 'POST', f.id ? base + '/' + String(f.id).replace(/\D/g, '') : base, o).then(function (res) {
+            var h = res.hauler, i = d.haulers.findIndex(function (x) { return x.id === h.id; });
+            if (i >= 0) d.haulers.splice(i, 1, h); else d.haulers.push(h);
+            self.persist(); self.hf = null; self.toast(f.id ? 'Hauler saved' : 'Hauler added');
+          }).catch(function (e) { self.hErr = e.message; }).then(function () { self.saving = false; });
+          return;
         }
         if (f.kind === 'driver') {
           if (!v(f.name)) return err("Enter the driver's name.");
-          if (!v(f.lic)) return err('Enter the licence number.');
-          if (!v(f.exp)) return err('Enter the licence expiry date.');
-          Object.assign(d.drivers.find(function (x) { return x.id === f.id; }), { name: v(f.name), lic: v(f.lic), exp: f.exp, phone: v(f.phone) });
+          if (badPhone(f.phone)) return err(PHONE_MSG);
+          if (this.saving) return;
+          this.saving = true;
+          api('PUT', (window.OPS_API || {}).drivers + '/' + String(f.id).replace(/\D/g, ''), { name: v(f.name), phone: v(f.phone) }).then(function (res) {
+            self.applyServer(res); self.hf = null; self.toast('Saved');
+          }).catch(function (e) { self.hErr = e.message; }).then(function () { self.saving = false; });
+          return;
         }
         if (f.kind === 'truck') {
           var plate = v(f.plate).toUpperCase();
@@ -413,6 +459,7 @@
             var c = DOCS[j], dc = f.docs[c[0]];
             if (!dc.exp) return err('Enter the expiry date of the ' + c[1] + '.');
             if (!dc.file) return err('Upload the ' + c[1] + '.');
+            if (this.docChanged(f, c[0]) && dc.exp <= isoDate(TODAY)) return err('The ' + c[1] + ' expiry date must be after today. A date that is today or earlier means the document has expired.');
           }
           if (f.showSub && v(f.sname) && this.low(f.sname) === this.low(f.dname)) return err('The substitute driver must be a different person from the driver.');
           if (this.isNewHauler && !this.hc) { this.cErr = ''; this.hc = { name: v(f.hname), contact: '', phone: '', addr: '' }; return; }
@@ -426,27 +473,43 @@
         this.cErr = '';
         if (!v(c.name)) { this.cErr = 'Enter the company name.'; return; }
         if (!v(c.addr)) { this.cErr = 'Enter the company address.'; return; }
+        if (badPhone(c.phone)) { this.cErr = PHONE_MSG; return; }
         if (this.haulerByName(c.name)) { this.cErr = 'A hauler with this company name already exists. Go back and pick it from the list.'; return; }
-        var d = this.d, n = 1; while (d.haulers.some(function (x) { return x.id === 'H' + n; })) n++;
-        var nh = { id: 'H' + n, name: v(c.name), contact: v(c.contact), phone: v(c.phone), addr: v(c.addr) };
-        var f = this.hf, plan = this.planDriver(f.dname, nh.id, f.plate.trim().toUpperCase(), 'driver', f.id ? (this.truck(f.id) || {}).d : '');
+        var f = this.hf, plan = this.planDriver(f.dname, 'H0', f.plate.trim().toUpperCase(), 'driver', f.id ? (this.truck(f.id) || {}).d : '');
         if (plan.err) { this.cErr = plan.err; return; }
-        d.haulers.push(nh); this.hc = null; f.hname = nh.name;
-        this.finishTruck(nh.id, true);
-        void self;
+        this.finishTruck(null, { name: v(c.name), contact: v(c.contact), phone: v(c.phone), addr: v(c.addr) });
       },
-      finishTruck: function (hid) {
-        var f = this.hf, d = this.d, v = function (s) { return String(s == null ? '' : s).trim(); };
+      finishTruck: function (hid, nh) {
+        var f = this.hf, v = function (s) { return String(s == null ? '' : s).trim(); }, self = this;
         var plate = v(f.plate).toUpperCase(), old = f.id ? this.truck(f.id) : null;
-        var p1 = this.planDriver(f.dname, hid, plate, 'driver', old ? old.d : '');
-        if (p1.err) { this.hErr = p1.err; return; }
-        var p2 = null;
-        if (f.showSub && v(f.sname)) { p2 = this.planDriver(f.sname, hid, plate, 'sub', old ? old.s : ''); if (p2.err) { this.hErr = p2.err; return; } if (p2.id && p2.id === p1.id) { this.hErr = 'The substitute driver must be a different person from the driver.'; return; } }
-        var did = this.applyDriver(p1, hid), sid = p2 ? this.applyDriver(p2, hid) : '';
-        var docs = {}; DOCS.forEach(function (c) { docs[c[0]] = { exp: f.docs[c[0]].exp, file: f.docs[c[0]].file }; });
-        var ot = { plate: plate, h: hid, d: did, s: sid, cap: this.num(f.cap), comps: f.cl.map(function (x) { return Number(String(x).replace(/,/g, '')); }), docs: docs };
-        if (old) Object.assign(old, ot); else d.trucks.push(ot);
-        this.persist(); this.hf = null; this.hc = null; this.toast(old ? 'Truck saved' : 'Truck registered');
+        var show = function (m) { if (nh) self.cErr = m; else self.hErr = m; };
+        var hk = hid || 'H0';
+        /* quick checks so the person sees the problem at once (the server checks again) */
+        var p1 = this.planDriver(f.dname, hk, plate, 'driver', old ? old.d : '');
+        if (p1.err) { show(p1.err); return; }
+        var sub = f.showSub && v(f.sname);
+        if (sub) {
+          var p2 = this.planDriver(f.sname, hk, plate, 'sub', old ? old.s : '');
+          if (p2.err) { show(p2.err); return; }
+          if (p2.id && p2.id === p1.id) { show('The substitute driver must be a different person from the driver.'); return; }
+        }
+        if (this.saving) return;
+        this.saving = true;
+        var fd = new FormData(), base = (window.OPS_API || {}).trucks;
+        fd.append('plate', plate);
+        if (hid) fd.append('hauler_id', String(hid).replace(/\D/g, ''));
+        else if (nh) { fd.append('hauler_name', nh.name); fd.append('new_addr', nh.addr); fd.append('new_contact', nh.contact); fd.append('new_phone', nh.phone); }
+        fd.append('driver_name', v(f.dname));
+        if (sub) fd.append('substitute_name', v(f.sname));
+        fd.append('capacity', this.num(f.cap));
+        f.cl.forEach(function (x) { fd.append('compartments[]', Number(String(x).replace(/,/g, ''))); });
+        DOCS.forEach(function (c) { fd.append(c[0] + '_expiry', f.docs[c[0]].exp); if (PICKED[c[0]]) fd.append(c[0] + '_file', PICKED[c[0]]); });
+        var url = base;
+        if (old) { fd.append('_method', 'PUT'); url = base + '/' + old.tid; }
+        api('POST', url, fd).then(function (res) {
+          self.applyServer(res); self.hf = null; self.hc = null; PICKED = {};
+          self.toast(old ? 'Truck saved' : 'Truck registered');
+        }).catch(function (e) { show(e.message); }).then(function () { self.saving = false; });
       },
 
       /* ---- toast ---- */

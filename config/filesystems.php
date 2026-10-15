@@ -45,6 +45,15 @@ return [
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
+            
+        ],
+
+        'website_files' => [
+            'driver' => 'local',
+            'root' => storage_path('app/uploads'),
+            'serve' => false,
+            'throw' => true,
+            'report' => false,
         ],
 
         's3' => [

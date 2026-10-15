@@ -42,22 +42,6 @@
     </section>
 
     <section class="rounded-lg border border-slate-200 bg-white p-4">
-        <div class="flex items-center justify-between"><h3 class="font-semibold text-slate-900">Data alerts</h3><a href="{{ route('haulers.index', ['tab' => 'trucks']) }}" class="text-sm text-emerald-800 hover:underline">Hauler management</a></div>
-        <ul class="mt-3 space-y-2 text-sm">
-            @forelse ($alerts as $t)
-                @foreach (array_filter($t['cert_list'], fn ($c) => $c['status'] !== 'Valid') as $c)
-                    <li class="flex items-center justify-between gap-3"><span>{{ $t['plate'] }}: {{ $c['name'] }} ({{ $c['expiry'] }})</span><x-status-badge :status="$c['status']" /></li>
-                @endforeach
-            @empty
-                <li class="text-slate-500">All truck certificates are valid.</li>
-            @endforelse
-            @foreach ($driverAlerts as $d)
-                <li class="flex items-center justify-between gap-3"><span>{{ $d['name'] }}: license ({{ \Carbon\Carbon::parse($d['license_expiry'])->format('M d, Y') }})</span><x-status-badge :status="\App\Support\DemoData::certStatus($d['license_expiry'])" /></li>
-            @endforeach
-        </ul>
-    </section>
-
-    <section class="rounded-lg border border-slate-200 bg-white p-4">
         <div class="flex items-center justify-between"><h3 class="font-semibold text-slate-900">Recent audit and security events</h3><a href="{{ route('audit.index') }}" class="text-sm text-emerald-800 hover:underline">Audit trail</a></div>
         <ul class="mt-3 space-y-3 text-sm">
             @foreach ($audit as $e)

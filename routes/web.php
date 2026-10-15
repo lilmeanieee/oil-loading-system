@@ -52,6 +52,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/atl/{id}/approve', [AtlController::class, 'approve'])->whereNumber('id')->name('atl.approve');
     Route::post('/atl/{id}/decline', [AtlController::class, 'decline'])->whereNumber('id')->name('atl.decline');
     Route::get('/approvals', [OperationsController::class, 'approvals'])->name('approvals.index');
+    Route::get('/approvals/{id}/allocate', [OperationsController::class, 'allocate'])->where('id', '[A-Za-z0-9\-]+')->name('approvals.allocate');
 
     // Loading
     Route::get('/loading', [LoadingTicketController::class, 'index'])->name('loading.index');

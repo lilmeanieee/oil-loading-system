@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Support\DemoData;
+use App\Support\OpsData;
 use App\Support\Role;
 use Illuminate\Http\Request;
 
@@ -12,10 +13,17 @@ class AtlController extends Controller
     {
         abort_unless(Role::can('atl.view'), 403);
 
-        $atls = collect(DemoData::atls());
         if (Role::current() === 'atl_user') {
-            $atls = $atls->where('creator', DashboardController::ME); // an ATL User sees only their own ATLs
+            // The ATL User's own records page (reads the shared demo store in the browser).
+            $tabs = ['Draft' => 'draft', 'Submitted' => 'pending', 'Approved' => 'approved', 'Declined' => 'declined'];
+
+            return view('atl.records', [
+                'opsSeed' => OpsData::seed(optional(auth()->user())->name),
+                'tab'     => $tabs[$preset] ?? ($mode === 'mine' ? 'draft' : 'all'),
+            ]);
         }
+
+        $atls = collect(DemoData::atls());
 
         return view('atl.index', ['atls' => $atls->values()->all(), 'title' => $title, 'preset' => $preset, 'mode' => $mode]);
     }
@@ -51,14 +59,8 @@ class AtlController extends Controller
     {
         abort_unless(Role::can('atl.create'), 403);
 
-        $prefill = $request->query('edit') ? DemoData::findAtl((int) $request->query('edit')) : null;
-
-        return view('atl.create', [
-            'trucks'   => DemoData::trucks(),
-            'products' => collect(DemoData::products())->pluck('atl')->all(),
-            'prefill'  => $prefill,
-            'taken'    => DemoData::taken($prefill['id'] ?? null),
-        ]);
+        // The create form reads trucks, drivers and haulers from the shared demo store in the browser.
+        return view('atl.create', ['opsSeed' => OpsData::seed(optional(auth()->user())->name)]);
     }
 
     public function store(Request $request)

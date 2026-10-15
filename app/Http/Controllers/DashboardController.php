@@ -31,7 +31,7 @@ class DashboardController extends Controller
             $data += $role === 'admin' ? $this->adminData($atls) : $this->staffData($atls);
         }
 
-        if ($role === 'operations') {
+        if (in_array($role, ['operations', 'atl_user'], true)) {
             $data['opsSeed'] = \App\Support\OpsData::seed(optional(auth()->user())->name);
         }
 

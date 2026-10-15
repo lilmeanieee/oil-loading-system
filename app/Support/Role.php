@@ -28,7 +28,7 @@ class Role
     private const MATRIX = [
         'atl_user'   => ['atl.create', 'atl.view', 'trucks.view', 'documents.view'],
         'operations' => ['atl.view', 'atl.approve', 'trucks.manage', 'trucks.view', 'drivers.manage', 'drivers.view', 'haulers.manage', 'haulers.view', 'loading.manage', 'documents.view', 'documents.issue', 'documents.reprint', 'reports.view'],
-        'admin'      => ['atl.view', 'trucks.manage', 'trucks.view', 'drivers.manage', 'drivers.view', 'haulers.manage', 'haulers.view', 'products.manage', 'users.manage', 'reports.view', 'audit.view', 'settings.manage'],
+        'admin'      => ['atl.view', 'products.manage', 'users.manage', 'reports.view', 'audit.view', 'settings.manage'],
         'owner'      => ['atl.view', 'trucks.view', 'documents.view', 'reports.view', 'audit.view'],
     ];
 
@@ -49,7 +49,6 @@ class Role
         'admin' => [
             ['Dashboard', 'dashboard', 'dashboard', 'dashboard'],
             ['User Management', 'users.index', 'users.*', 'users'],
-            ['Hauler Management', 'haulers.index', 'haulers.*|trucks.*|drivers.*', 'hauler'],
             ['Audit Trail', 'audit.index', 'audit.*', 'shield'],
             ['Settings', 'settings.index', 'settings.*', 'cog'],
         ],
